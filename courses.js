@@ -218,9 +218,6 @@ function main() {
 					  noDatesFilter,
 						"} ORDER BY ASC(?courseTitle)"
 					].join("\n");
-
-console.log(query);
-return;
 										
 					$.ajax({
 						url: "https://data.ox.ac.uk/sparql/",
