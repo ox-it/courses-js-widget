@@ -1,0 +1,9 @@
+#sidebar-one {
+  float:left;
+  width:30%
+}
+#content {
+  float:left;
+  width:65%;
+  padding:0 2.5%;
+}
