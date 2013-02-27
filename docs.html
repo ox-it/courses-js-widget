@@ -8,9 +8,7 @@
 <script src="https://static.data.ox.ac.uk/lib/jquery-ui.min.js" type="text/javascript"></script>
 <script src="https://static.data.ox.ac.uk/app/dataox-1.0.min.js" type="text/javascript"></script>
 <script src="https://static.data.ox.ac.uk/app/courses-1.0.min.js" type="text/javascript"></script>
-<link type="text/css" rel="stylesheet" media="all" href="https://static.data.ox.ac.uk/lib/jquery-ui/themes/base/jquery.ui.core.css"/>
-<link type="text/css" rel="stylesheet" media="all" href="https://static.data.ox.ac.uk/lib/jquery-ui/themes/base/jquery.ui.theme.css"/>
-<link type="text/css" rel="stylesheet" media="all" href="https://static.data.ox.ac.uk/lib/jquery-ui/themes/base/jquery.ui.autocomplete.css"/>
+<link type="text/css" rel="stylesheet" media="all" href="http://static.data.ox.ac.uk/lib/jquery-ui/themes/smoothness/jquery-ui-1.8.custom.css"/>
 <style type="text/css">
 
 body { font-family: 'Verdana', 'Arial', sans-serif }
@@ -64,13 +62,6 @@ div#autocomplete-with-callback-metadata { height: 10em }
 &lt;script src="https://static.data.ox.ac.uk/lib/jquery.min.js" type="text/javascript"&gt;&lt;/script&gt;
 &lt;script src="https://static.data.ox.ac.uk/lib/jquery.dataTables.min.js" type="text/javascript"&gt;&lt;/script&gt;
 &lt;script src="https://static.data.ox.ac.uk/app/courses-1.0.min.js" type="text/javascript"&gt;&lt;/script&gt;
-</code></pre>
-
-<p>You may also want to include our default CSS, by adding the following to your page's &lt;head&gt;:</p>
-
-<pre><code>
-&lt;link type="text/css" rel="stylesheet" media="all" href="http://static.data.ox.ac.uk/jquery-ui/css/smoothness/jquery-ui-1.8.22.custom.css"/&gt;
-
 </code></pre>
 
 <p>Then, at the point in the page's &lt;body&gt; where you want the courses table to appear, include the following (for example):</p>
@@ -221,7 +212,7 @@ div#autocomplete-with-callback-metadata { height: 10em }
 
   <h2 id="oxpoints" name="oxpoints">Oxpoints URI finder</h2>
   <p>Start typing the name of a unit to get its oxpoints URI:</p>
-  <input id="autocomplete-with-callback" class="dataox-autocomplete" data-autocomplete-type="organization">
+  <input id="autocomplete-with-callback" data-autocomplete-type="organization">
 
   <div id="autocomplete-with-callback-metadata"></div>
       <script type="text/javascript">
