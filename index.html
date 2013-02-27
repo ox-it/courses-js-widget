@@ -2,88 +2,154 @@
 <html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<link type="text/css" rel="stylesheet" media="all" href="example.css" />
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js" type="text/javascript"></script>
-<script src="dataTables/js/jquery.dataTables.min.js" type="text/javascript"></script>
-<script src="jsDump-1.0.0.js" type="text/javascript"></script>
-<script src="courses.js" type="text/javascript"></script>
-<script type="text/javascript" src="http://static.data.ox.ac.uk/jquery-ui/js/jquery-ui-1.8.22.custom.min.js"></script>
-<script type="text/javascript" src="http://static.data.ox.ac.uk/api-1.0.js"></script>
-<link type="text/css" rel="stylesheet" media="all" href="http://static.data.ox.ac.uk/jquery-ui/css/smoothness/jquery-ui-1.8.22.custom.css"/>
+<!-- <link type="text/css" rel="stylesheet" media="all" href="example.css" /> -->
+<script src="https://static.data.ox.ac.uk/lib/jquery.min.js" type="text/javascript"></script>
+<script src="https://static.data.ox.ac.uk/lib/jquery.dataTables.min.js" type="text/javascript"></script>
+<script src="https://static.data.ox.ac.uk/lib/jquery-ui.min.js" type="text/javascript"></script>
+<script src="https://static.data.ox.ac.uk/app/dataox-1.0.min.js" type="text/javascript"></script>
+<script src="https://static.data.ox.ac.uk/app/courses-1.0.min.js" type="text/javascript"></script>
+<link type="text/css" rel="stylesheet" media="all" href="http://static.data.ox.ac.uk/lib/jquery-ui/themes/smoothness/jquery-ui-1.8.custom.css"/>
 <style type="text/css">
-dt { font-weight: bold }
+
+body { font-family: 'Verdana', 'Arial', sans-serif }
+
+h1, h2 { border-bottom: 2px solid #002147;
+         color: #002147; } 
+
+pre { background-color: #ffffcc; }
+
+dt { font-weight: bold; }
+
+dl.outer > dt { background-color: rgb(158,206,235);
+                padding: 0.5em 0em 0.5em 0em;
+                border-bottom: 1px solid #002147;
+                border-top: 1px solid #002147;
+                font-weight: bold; 
+}
+
+dl.inner dt { background-color: rgb(224,222,217);
+
+}
+
+div#autocomplete-with-callback-metadata { height: 10em }
+
+.courses-widget-container {  }
+
 </style>
 </head>
 <body>
-	<div id="_debug"></div>
 	
-	<div id="main">
-		<div id="sidebar-one">
-			<div class="courses-widget-container small" data-title="Courses" data-displayColumns="title start" data-unit="http://oxpoints.oucs.ox.ac.uk/id/23232568" data-skill="GT"></div>
-		</div>
-		<div id="content">
-		<h1>Course Listings Widget</h1>
+<div id="main">
 
-<h2>Selection criteria</h2>
+<div id="content">
+<h1>Course Listings Widget</h1>
+
+<p>The Course Listings Widget allows you to embed a table containing a selection of course details in your web page. The selection can be made according to various criteria e.g. date, course provider, and eligibility.</p>
+
+<ul>
+ <li><a href="#code">Code required in your page</a></li>
+ <li><a href="#selection">Selection criteria</a></li>
+ <li><a href="#display">Display settings</a></li>
+ <li><a href="#csshooks">CSS styling</a></li>
+ <li><a href="#oxpoints">Oxpoints URI finder</a></li>
+</ul>
+
+<h2 id="code" name="code">Code required in your page</a></h2>
+
+<p>To embed a Course Listings Widget in your page, you will need to include the following JavaScript and CSS files in your page's &lt;head&gt;:</p>
+
+<pre><code>
+&lt;script src="https://static.data.ox.ac.uk/lib/jquery.min.js" type="text/javascript"&gt;&lt;/script&gt;
+&lt;script src="https://static.data.ox.ac.uk/lib/jquery.dataTables.min.js" type="text/javascript"&gt;&lt;/script&gt;
+&lt;script src="https://static.data.ox.ac.uk/app/courses-1.0.min.js" type="text/javascript"&gt;&lt;/script&gt;
+</code></pre>
+
+<p>Then, at the point in the page's &lt;body&gt; where you want the courses table to appear, include the following (for example):</p>
+
+<pre><code>
+&lt;div class="courses-widget-container" 
+     data-title="Courses from the Bodleian Libraries" 
+     data-displayColumns="title venue provider start" 
+     data-providedBy="http://oxpoints.oucs.ox.ac.uk/id/23233598"&gt;
+&lt;/div&gt;
+
+</code></pre>
+
+<p>The above example generates the following widget:</p>
+
+<div class="courses-widget-container" 
+     data-title="Courses from the Bodleian Libraries" 
+     data-displayColumns="title venue provider start" 
+     data-providedBy="http://oxpoints.oucs.ox.ac.uk/id/23233598">
+</div>
+
+<p>See below for details of all the configurable options.</p>
+
+<h2 id="selection" name="selection">Selection criteria</h2>
 
 <p>The course listings widget displays courses that match criteria set by the webpage designer.</p>
 <p>To set criteria add attributes to the div:</p>
 
-<dl>
+<dl class="outer">
 <dt>data-providedBy</dt>
-<dd><dl>
+<dd>
+<dl class="inner">
 <dt>Filters on:</dt>
-<dd>units (divisions or departments) offering the course</dd>
+<dd>Units (divisions or departments) offering the course</dd>
 <dt>Value:</dt>
-<dd>oxpoints uri of the unit</dd>
+<dd>The Oxpoints URI of the unit. To find this for your unit, you can use the <a href="#oxpoints">Oxpoints URI finder</a> below.</dd>
 <dt>Default:</dt>
 <dd>"http://oxpoints.oucs.ox.ac.uk/id/00000000" (University of Oxford)
 <p id="unit-note"><strong>Please note:</strong> if no unit is specified, the widget will display all courses offered by the University. This is a very large list that will take a long time to fetch. <!-- To find a unit's oxpoints uri, use the widget below. --></p>
 </dd>
 <dt>Example:</dt>
-<dd>data-providedBy = "http://oxpoints.oucs.ox.ac.uk/id/00000000"</dd>
+<dd>data-providedBy="http://oxpoints.oucs.ox.ac.uk/id/00000000"</dd>
 </dl>
 </dd>
 <dt>data-startingAfter</dt>
 <dd>
-<dl>
+<dl class="inner">
 <dt>Filters on:</dt>
 <dd>courses starting after a date</dd>
 <dt>Value:</dt>
 <dd>Format: YYYY-MM-DDT00:00:00 or "now"</dd>
 <dt>Example:</dt>
-<dd>data-startingAfter = "2013-01-01T00:00:00"</dd>
+<dd>data-startingAfter="2013-01-01T00:00:00"</dd>
 </dl>
 </dd>
 <dt>data-startingBefore</dt>
 <dd>
-<dl>
+<dl class="inner">
 <dt>Filters on:</dt>
 <dd>courses starting before a date</dd>
 <dt>Value:</dt>
 <dd>Format: YYYY-MM-DDT00:00:00</dd>
 <dt>Example:</dt>
-<dd>data-startingBefore = "2013-01-01T00:00:00"</dd>
+<dd>data-startingBefore="2013-01-01T00:00:00"</dd>
 </dl>
 </dd>
 <dt>data-skill OR data-researchMethod</dt>
 <dd>
-<dl>
+<dl class="inner">
 <dt>Filters on:</dt>
-<dd>courses in a particular skill area or a quantitative or qualitative research method</dd>
+<dd>courses in a particular skill area, or a quantitative/qualitative research method</dd>
 <dt>Value:</dt>
-<dd>ox-rdf or ox-rm code</dd>
-<td>Example:</dt>
-<dd>data-skill = "GT"</dd>
+<dd>An ox-rdf or ox-rm code. A complete list of values can be seen in data.ox:
+ <ul>
+  <li><a href="https://data.ox.ac.uk/sparql/?query=SELECT+%3Fcode+%3Flabel+WHERE+{%0D%0A++%3Chttps%3A%2F%2Fdata.ox.ac.uk%2Fid%2Fox-rdf%2Fconcept-scheme%3E+skos%3AhasTopConcept%2Fskos%3Anarrower*+%3Fconcept+.%0D%0A++%3Fconcept+skos%3AprefLabel+%3Flabel+%3B%0D%0A++++skos%3Anotation+%3Fcode+.%0D%0A++FILTER+%28DATATYPE%28%3Fcode%29+%3D+%3Chttps%3A%2F%2Fdata.ox.ac.uk%2Fid%2Fox-rdf%2Fnotation%3E%29%0D%0A}+ORDER+BY+%3Flabel&format=&common_prefixes=on">Available values for data-skill (ox-rdf codes)</a></li>
+  <li><a href="https://data.ox.ac.uk/sparql/?query=SELECT+%3Fcode+%3Flabel+WHERE+{%0D%0A++%3Chttps%3A%2F%2Fdata.ox.ac.uk%2Fid%2Fox-rm%2Fconcept-scheme%3E+skos%3AhasTopConcept%2Fskos%3Anarrower*+%3Fconcept+.%0D%0A++%3Fconcept+skos%3AprefLabel+%3Flabel+%3B%0D%0A++++skos%3Anotation+%3Fcode+.%0D%0A++FILTER+%28DATATYPE%28%3Fcode%29+%3D+%3Chttps%3A%2F%2Fdata.ox.ac.uk%2Fid%2Fox-rm%2Fnotation%3E%29%0D%0A}+ORDER+BY+%3Flabel&format=&common_prefixes=on">Available values for data-researchMethod (ox-rm codes)</a></li>
+ </ul>
+<dt>Example:</dt>
+<dd>data-skill="GT"</dd>
 </dl>
 </dd>
 <dt>data-eligibility</dt>
 <dd>
-<dl>
+<dl class="inner">
 <dt>Filters on:</dt>
 <dd>who is eligible to book</dd>
 <dt>Value:</dt>
-<dd>format: a space separated list of the following:
+<dd>Format: a space separated list of the following:
 <ul>
 <li>ST: staff</li>
 <li>OX: members of the University</li>
@@ -93,14 +159,21 @@ dt { font-weight: bold }
 <dt>Default:</dt>
 <dd>"ST OX PU"</dd>
 <dt>Example:</dt>
-<dd>data-eligibility = "OX PU"</dd>
+<dd>data-eligibility="OX PU"</dd>
 </dl>
 </dd>
 </dl>
 
-<h2>Columns to display</h2>
+<h2 id="display" name="display">Display settings</h2>
 
-<p>To choose which columns to display in the table (and their order), use the <tt>data-displayColumns</tt> attribute to provide a space-separated list of columns. The order in which they are given in the attribute is the order in which they will appear. Columns available are:
+<dl class="outer">
+ <dt>data-displayColumns</dt>
+ <dd>
+  <dl class="inner">
+   <dt>Controls:</dt>
+   <dd>which columns to display in the table (and their order)</dd>
+   <dt>Value:</dt>
+   <dd>Format: a space-separated list of columns. The order in which they are given in the attribute is the order in which they will appear. Columns available are:
 <ul>
 <li>start</li>
 <li>title</li>
@@ -111,59 +184,56 @@ dt { font-weight: bold }
 <li>eligibility</li>
 <li>info</li>
 </ul>
-For example, to display only the start date, course title and venue, use <tt>data-displayColumns="start title venue"</tt>.</p>
+   </dd>
+   <dt>Example:</dt>
+   <dd>data-displayColumns="start title venue" (this will display only the start date, course title and venue)</dd>
+ </dl>
+ </dd>
+ <dt>data-title</dt>
+ <dd>
+  <dl class="inner">
+   <dt>Controls:</dt>
+   <dd>The title (&lt;h2&gt;) of the widget table</dd>
+   <dt>Value:</dt>
+   <dd>Any text to appear in the heading. If no title is given, it will default to 'Courses'.</dd>
+   <dt>Example:</dt>
+   <dd>data-title="Courses from the Department of Studies"</dd>
+  </dl>
+ </dd>
+</dl>
 
+<h2 id="csshooks" name="csshooks">CSS styling</h2>
 
+<p>The container &lt;div&gt; for the courses widget must have the class <tt>courses-widget-container</tt> in order for the Javascript to be triggered; however, it can of course have other classes as well to aid styling.</p>
 
-  <h2>Oxpoints URI finder</h2>
+<p>The 'courses without specific dates' link is created with the class <tt>courses-widget-no-date-toggle-link</tt>.</p>
+
+<p>The table containing the course information is generated using the <a href="http://www.datatables.net">DataTables</a> jQuery plug-in. For further information on styling the elements of a DataTables table (table, cells, pager, searchbox, etc), see the DataTables website: <a href="http://www.datatables.net/styling/">DataTables: Styling information</a></p> 
+
+  <h2 id="oxpoints" name="oxpoints">Oxpoints URI finder</h2>
   <p>Start typing the name of a unit to get its oxpoints URI:</p>
-  <input id="autocomplete-with-callback" class="dataox-autocomplete" data-autocomplete-type="organization">
+  <input id="autocomplete-with-callback" data-autocomplete-type="organization">
 
-<div id="autocomplete-with-callback-metadata"></div>
+  <div id="autocomplete-with-callback-metadata"></div>
       <script type="text/javascript">
         $(function() {
         	dataox.autocomplete("autocomplete-with-callback", {
         		select: function(event, ui) {
         			var dl = $('<dl>');
+	                        var name = $('input#autocomplete-with-callback').val();
         			var metadata = $('#autocomplete-with-callback-metadata').empty().append(dl);
         			if (ui.item.uri) {
-        				
-        				dl.append($('<dt>').text('OXPoint URI:'))
+          
+        				dl.append($('<dt>').text('Unit:'))
+	                                  .append($('<dd>').html(name))
+	                                  .append($('<dt>').text('Oxpoints URI:'))
         				  .append($('<dd>').html(ui.item.uri));
         			}
          		}
         	});
         });
       </script>
-<!--
-
-<p>applyTo is the public URL NOT the memberApplyTo URL. It should probably open in a new window.</p>
-
-<p>You can fetch status from the oxcap:status attribute on the <presentation> element. 'CN' indicates a course has been cancelled. I'm not sure whether 'Notes' is the right column heading - this column will hardly ever be used and maybe there is a better way of indicating a course has been cancelled.</p>
-
-<p>What about pagination? Would it be possible to list 50 courses and then have a link to 'Next 50'?</p>
-
-<p>What about courses with no dates? Would it be possible to have a link to a similar display of courses without dates. The SES tool in WebLearn has this.</p>
-
-<p>There should be an extended display where the columns and their order can be configured.</p>
-
-<p>The full list of columns:</p>
-<ul>
-<li>start date (course >> presentation >> start |dtf attribute or course >> presentation >> start if no dtf attribute - this on page with no dates)</li>
-<li>title (which is hyperlink ending up at publicApplyTo URL) with optional 'Cancelled' label (see above) (course >> presentation >> title, and course >> presentation >> applyTo and course >> presentation | oxcap:status attribute)</li>
-<li>provider (provider >> title)</li>
-<li>venue or venue text (as hyperlink to oxpoints) (course >> presentation >> venue)</li>
-<li>Eligibility (course >> presentation >> regulations | oxcap:eligibility attribute</li>
-<li>More info (URL) (course >> URL)</li>
-</ul>
-</p>
--->
-
-
-<div class="courses-widget-container" data-title="Courses" data-displayColumns="title venue provider start" data-providedBy="http://oxpoints.oucs.ox.ac.uk/id/23232639"></div>
-		</div>
-		
-		<div id="debug"></div>	
-	</div>
+	
+    </div>
 </body>
 </html>
