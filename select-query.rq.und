@@ -1,0 +1,32 @@
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX mlo: <http://purl.org/net/mlo/>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX oxcap: <http://purl.ox.ac.uk/oxcap/ns/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX time: <http://www.w3.org/2006/time#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX xcri: <http://xcri.org/profiles/1.2/>
+
+SELECT DISTINCT ?presentation WHERE {
+  VALUES ?unit { <% _.each(units, function(unit) { %><<%=unit%>><% }); %> }
+  ?unit ^org:subOrganizationOf* ?provider .
+  ?provider mlo:offers ?course .
+  ?course mlo:specifies ?presentation .
+<% if (!includeContinuingEducation) { %>
+  NOT EXISTS { <http://course.data.ox.ac.uk/id/continuing-education/catalog> skos:member ?course }
+<% } %>
+  OPTIONAL {
+    ?presentation mlo:start/(rdf:value|time:inXSDDateTime) ?start
+  }
+<% if (withoutDates) { %>
+  FILTER (!bound(?start))
+<% } %>
+<% if (startingAfter) { %>
+  FILTER (bound(?start) && ((datatype(?start) = xsd:date && ?start >= "<%-startingAfter.substring(0, 10)%>"^^xsd:date)
+                         || (tz(?start) && ?start >= "<%-startingAfter%>"^^xsd:dateTime)
+                         || (?start >= "<%-startingAfter.substring(0, 19)%>"^^xsd:dateTime)))
+<% } %>
+}

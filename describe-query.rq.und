@@ -1,0 +1,20 @@
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX mlo: <http://purl.org/net/mlo/>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX oxcap: <http://purl.ox.ac.uk/oxcap/ns/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX time: <http://www.w3.org/2006/time#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX xcri: <http://xcri.org/profiles/1.2/>
+
+DESCRIBE ?provider ?course ?presentation ?start ?venue ?subject WHERE {
+  VALUES ?presentation { <% _.each(presentations, function(presentation) { %><<%=presentation%>><% }); %> }
+  ?course mlo:specifies ?presentation .
+  ?provider mlo:offers ?course
+  OPTIONAL { ?presentation mlo:start ?start }
+  OPTIONAL { ?presentation xcri:venue ?venue }
+  OPTIONAL { ?course dcterms:subject ?subject }
+}

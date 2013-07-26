@@ -3,11 +3,42 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- <link type="text/css" rel="stylesheet" media="all" href="example.css" /> -->
-<script src="https://static.data.ox.ac.uk/lib/jquery/jquery.min.js" type="text/javascript"></script>
+<!-- <script src="https://static.data.ox.ac.uk/lib/jquery/jquery.min.js" type="text/javascript"></script> -->
+<!--
 <script src="https://static.data.ox.ac.uk/lib/datatables/js/jquery.dataTables.min.js" type="text/javascript"></script>
 <script src="https://static.data.ox.ac.uk/lib/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
 <script src="https://static.data.ox.ac.uk/app/dataox-1.0.min.js" type="text/javascript"></script>
-<script src="courses.js" type="text/javascript"></script>
+-->
+<!--<script src="courses.js" type="text/javascript"></script>-->
+<script>
+  var require = {
+    baseUrl: "",
+    paths: {
+      "jquery": "https://static.data.ox.ac.uk/lib/jquery.min",
+      "underscore": "underscore-min",
+      "jquery.dataTables": "https://static.data.ox.ac.uk/lib/datatables/js/jquery.dataTables.min",
+      "jquery-ui": "https://static.data.ox.ac.uk/lib/jquery-ui/jquery-ui.min",
+      "dataox": "dataox-1.1",
+      "rdfstore": "rdf_store"
+    },
+    shim: {
+      "underscore": {
+        exports: "_"
+      },
+      "jquery.dataTables": ["jquery"],
+      "jquery-ui": ["jquery"],
+      "dataox": {
+        exports: "dataox",
+        deps: ["jquery-ui"]
+      },
+      "rdfstore": {
+          exports: "rdfstore"
+      }
+    }
+  };
+</script>
+<script src="require.js" data-main="demo"></script>
+
 <link type="text/css" rel="stylesheet" media="all" href="http://static.data.ox.ac.uk/lib/jquery-ui/themes/smoothness/jquery-ui-1.8.custom.css"/>
 <style type="text/css">
 
@@ -215,24 +246,6 @@ div#autocomplete-with-callback-metadata { height: 10em }
   <input id="autocomplete-with-callback" data-autocomplete-type="organization">
 
   <div id="autocomplete-with-callback-metadata"></div>
-      <script type="text/javascript">
-        $(function() {
-        	dataox.autocomplete("autocomplete-with-callback", {
-        		select: function(event, ui) {
-        			var dl = $('<dl>');
-	                        var name = $('input#autocomplete-with-callback').val();
-        			var metadata = $('#autocomplete-with-callback-metadata').empty().append(dl);
-        			if (ui.item.uri) {
-          
-        				dl.append($('<dt>').text('Unit:'))
-	                                  .append($('<dd>').html(name))
-	                                  .append($('<dt>').text('Oxpoints URI:'))
-        				  .append($('<dd>').html(ui.item.uri));
-        			}
-         		}
-        	});
-        });
-      </script>
 	
     </div>
 </body>
