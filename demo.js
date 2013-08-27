@@ -1,4 +1,4 @@
-define(["jquery", "dataox", "courses"], function($, DataOx) {
+require(["jquery", "dataox", "courses"], function($, DataOx) {
         $(function() {
         	var dataox = new DataOx();
         	
