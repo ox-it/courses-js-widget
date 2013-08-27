@@ -334,7 +334,7 @@ define(['jquery', 'underscore', 'rdfstore', 'dataox', 'jquery.dataTables', 'sele
 					columnCount++;
 				}
 				$(e).children(".course-results-table").dataTable( {
-					"aoColumnDefs": dataTablesColumnsConfig
+					aoColumnDefs: dataTablesColumnsConfig,
 					iDisplayLength: 25
 				} );
 			}
