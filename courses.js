@@ -56,6 +56,8 @@ define(['jquery', 'underscore', 'rdfstore', 'dataox', 'jquery.dataTables', 'sele
 		return d.getFullYear() + "-" + paddedValue(d.getMonth()+1) + "-" + paddedValue(d.getDate()) + "T" + paddedValue(d.getHours()) + ":" + paddedValue(d.getMinutes()) + ":" + paddedValue(d.getSeconds());
 	}
 	
+	
+	
 /* Our main function 
 */
 	$(function() {
@@ -189,7 +191,8 @@ define(['jquery', 'underscore', 'rdfstore', 'dataox', 'jquery.dataTables', 'sele
 				.append($('<thead>').append($('<tr>').html(tableHeaderCells)))
 				.append(tbody);
 
-			var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+			//var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+			var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 			var weekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 			var r = _.bind(store.rdf.resolve, store.rdf);
@@ -225,13 +228,16 @@ define(['jquery', 'underscore', 'rdfstore', 'dataox', 'jquery.dataTables', 'sele
 					if (start && columnsToDisplay.start) {
 						start = start.object;
 						start = oneOf(start, 'time:inXSDDateTime', 'rdf:value').valueOf();
-						var startFormatted = weekday[start.getDay()] + " " + start.getDate() + " " + months[start.getMonth()] + " " + start.getFullYear() + ", " + start.getHours() + ":" + (start.getMinutes() < 10 ? "0" : "") + start.getMinutes();
-						// remove T0:00 - not meaningful (all day? no time given?)
-						if (startFormatted.match(/, 0:00/)) {
-							startFormatted = startFormatted.replace('\, 0:00', '')
-						}
 
-						cells.start = $('<span>').text(startFormatted);
+						var startTime = ""; 
+						var startHour = start.getHours();
+						if (startHour > 2) {
+						  var startMinutes = start.getMinutes();
+							startTime = " " + (startHour > 12 ? startHour - 12 : startHour) + ":" + (startMinutes < 10 ? "0" : "") + startMinutes + " " + (startHour > 11 ? "PM" : "AM");
+						}
+						var startFormatted = weekday[start.getDay()] + " " + start.getDate()+ " " + months[start.getMonth()]  + " " + start.getFullYear() + startTime;
+
+						cells.start = startFormatted;
 					}
 
 					var title = oneOf(course, 'dcterms:title', 'rdfs:label');
@@ -321,7 +327,20 @@ define(['jquery', 'underscore', 'rdfstore', 'dataox', 'jquery.dataTables', 'sele
 
 			$(e).append(table);
 			if (dataTables) {
-				$(e).children(".course-results-table").dataTable();//options.dataTableConfig);
+			  var dataTablesColumnsConfig = new Array();
+			  var columnCount = 0;
+				for (var column in columnsToDisplay) {
+					switch (column) {
+						case 'start':
+							dataTablesColumnsConfig.push({ "aTargets":[columnCount], "bSortable":true, "sType":"date"});
+							break;
+						default: break;
+					}
+					columnCount++;
+				}
+				$(e).children(".course-results-table").dataTable( {
+					"aoColumnDefs": dataTablesColumnsConfig
+				} );
 			}
 
 		}
