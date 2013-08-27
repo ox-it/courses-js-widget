@@ -321,7 +321,9 @@ define(['jquery', 'underscore', 'rdfstore', 'dataox', 'jquery.dataTables', 'sele
 
 			$(e).append(table);
 			if (dataTables) {
-				$(e).children(".course-results-table").dataTable();//options.dataTableConfig);
+				$(e).children(".course-results-table").dataTable({
+					iDisplayLength: 25
+				});//options.dataTableConfig);
 			}
 
 		}
