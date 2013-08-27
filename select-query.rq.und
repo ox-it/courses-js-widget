@@ -24,6 +24,9 @@ SELECT DISTINCT ?presentation WHERE {
 <% if (withoutDates) { %>
   FILTER (!bound(?start))
 <% } %>
+<% if (!withoutDates) { %>
+  FILTER (bound(?start))
+<% } %>
 <% if (startingAfter) { %>
   FILTER (bound(?start) && ((datatype(?start) = xsd:date && ?start >= "<%-startingAfter.substring(0, 10)%>"^^xsd:date)
                          || (tz(?start) && ?start >= "<%-startingAfter%>"^^xsd:dateTime)

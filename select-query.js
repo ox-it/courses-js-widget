@@ -17,6 +17,10 @@ __p+='\n  OPTIONAL {\n    ?presentation mlo:start/(rdf:value|time:inXSDDateTime)
 __p+='\n  FILTER (!bound(?start))\n';
  } 
 __p+='\n';
+ if (!withoutDates) { 
+__p+='\n  FILTER (bound(?start))\n';
+ } 
+__p+='\n';
  if (startingAfter) { 
 __p+='\n  FILTER (bound(?start) && ((datatype(?start) = xsd:date && ?start >= "'+
 ((__t=(startingAfter.substring(0, 10)))==null?'':_.escape(__t))+
