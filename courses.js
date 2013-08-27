@@ -14,7 +14,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 */
 
-define(['jquery', 'underscore', 'rdfstore', 'dataox', 'select-query', 'describe-query'], function($, _, rdfstore, DataOx, selectQueryTemplate, describeQueryTemplate) {
+define(['jquery', 'underscore', 'rdfstore', 'dataox', 'jquery.dataTables', 'select-query', 'describe-query'], function($, _, rdfstore, DataOx, dataTables, selectQueryTemplate, describeQueryTemplate) {
 	var prefixes = {
 		dc: 'http://purl.org/dc/elements/1.1/',
 	    dcterms: 'http://purl.org/dc/terms/',
