@@ -128,6 +128,7 @@ define(['jquery', 'underscore', 'rdfstore', 'dataox', 'jquery.dataTables', 'sele
 
 			dataox.sparql({
 				query: sparqlPrefixes + selectQueryTemplate(options),
+				type: "resultset",
 				ajaxOptions: {
 					beforeSend: function() { $(e).children(".courses-widget-wait").show(); }
 				}
@@ -135,6 +136,7 @@ define(['jquery', 'underscore', 'rdfstore', 'dataox', 'jquery.dataTables', 'sele
 				var presentations = _.map(results.results.bindings, function(r) { return r.presentation.value; });
 				dataox.sparql({
 					query: sparqlPrefixes + describeQueryTemplate({presentations: presentations}),
+					type: "graph",
 					ajaxOptions: {
 						complete: function() { $(e).children(".courses-widget-wait").hide(); }
 					}

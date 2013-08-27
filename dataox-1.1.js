@@ -280,24 +280,31 @@
 			sparql: function(options, callback) {
 				if (!$.isPlainObject(options))
 					options = {query: options};
-				accepts = [];
-				if (options.type != 'graph')
+				var accepts = [], formats = [];
+				if (options.type != 'graph') {
 					accepts.push('application/sparql-results+json');
-				if (options.type != 'resultset')
+					formats.push('srj');
+				}
+				if (options.type != 'resultset') {
 					accepts.push('text/turtle');
+					formats.push('ttl')
+				}
 				var ajaxOptions = $.extend({
 					url: options.sparqlURL || this.sparqlURL,
 					type: "POST",
 					headers: {Accept: accepts.join(', ')},
 					data: {
 						query: options.query,
-						common_prefixes: options.commonPrefixes ? "on" : ""
+						common_prefixes: options.commonPrefixes ? "on" : "",
+						format: formats.join(',')
 					},
-					//dataType: this.jQueryDataType,
+					//dataType: 'jsonp',
 					success: function(data, textStatus, xhr) {
-						var contentType = xhr.getResponseHeader('Content-type');
-						if (contentType.split(';')[0] == 'text/turtle')
-							options.type = 'graph';
+						if (!options.type) {
+							var contentType = xhr.getResponseHeader('Content-type');
+							if (contentType.split(';')[0] == 'text/turtle')
+								options.type = 'graph';
+						}
 						
 						if (options.type == 'graph') {
 							var store = new rdfstore.Store();
