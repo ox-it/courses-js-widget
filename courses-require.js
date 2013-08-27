@@ -1,5 +1,6 @@
 window.require = {
     baseUrl: "//static.data.ox.ac.uk/courses-js-widget/",
+    enforceDefine: true,
     paths: {
       "jquery": "//static.data.ox.ac.uk/lib/jquery.min",
       "underscore": "underscore-min",
