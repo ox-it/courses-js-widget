@@ -307,9 +307,9 @@ define(['jquery', 'underscore', 'rdfstore', 'dataox', 'jquery.dataTables', 'sele
 			var tableFoot = '</tbody></table>';
 
 
-			var linkTitle = (options.noDates)? "courses with specific dates" : "courses without specific dates";
+			var linkTitle = (options.withoutDates)? "courses with specific dates" : "courses without specific dates";
 			var $noDatesToggle = $('<a class="courses-widget-no-date-toggle-link" href="#">' + linkTitle + '</a>').click(function () {
-				options.noDates = (options.noDates)? false : true;
+				options.withoutDates = (options.withoutDates)? false : true;
 				$(e).children('.course-results-table').remove();
 				$(e).children('.dataTables_wrapper').remove();
 				$(this).remove(); 
