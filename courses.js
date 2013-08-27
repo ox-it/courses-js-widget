@@ -77,7 +77,7 @@ define(['jquery', 'underscore', 'rdfstore', 'dataox', 'select-query', 'describe-
 		var css_link = $("<link>", { 
 			rel: "stylesheet", 
 			type: "text/css", 
-			href: "//static.data.ox.ac.uk/courses-js-widget/courses-1.0.css" 
+			href: "//static.data.ox.ac.uk/courses-js-widget/courses.css" 
 		});
 		css_link.appendTo('head');
 
