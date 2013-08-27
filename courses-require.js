@@ -23,4 +23,4 @@ window.require = {
           exports: "rdfstore"
       }
     }
-};
+}; 
