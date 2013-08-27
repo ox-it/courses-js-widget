@@ -13,8 +13,8 @@ window.require = {
       "underscore": {
         exports: "_"
       },
-      "jquery.dataTables": ["jquery"],
-      "jquery-ui": ["jquery"],
+      "jquery.dataTables": {deps: ["jquery"]},
+      "jquery-ui": {deps: ["jquery"], exports: 'require'},
       "dataox": {
         exports: "dataox",
         deps: ["jquery-ui"]
@@ -23,4 +23,4 @@ window.require = {
           exports: "rdfstore"
       }
     }
-}; 
+};
