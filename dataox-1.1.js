@@ -199,7 +199,7 @@
 						lon: lon,
 						lat: lat,
 						label: options.label || e.attr('data-label')
-					})
+					});
 	
 				var uris = [];
 	
@@ -226,7 +226,7 @@
 						for (var i=0; i<data.results.bindings.length; i++) {
 							var binding = data.results.bindings[i];
 							if (!newPlaces[binding.place.value])
-								newPlaces[binding.place.value] = {}
+								newPlaces[binding.place.value] = {};
 							for (var field in binding)
 								newPlaces[binding.place.value][field] = binding[field].value;
 						}
@@ -243,7 +243,7 @@
 	        				options.places.push(newPlace);
 						}
 						this._mapShowPlaces(options);
-					})
+					});
 				} else if (options.places)
 					this._mapShowPlaces(options);
 			},
@@ -265,7 +265,7 @@
 						$(place.marker.icon.imageDiv).attr('title', place.compositeLabel);
 				}
 	
-				if (options.places.length == 0) {
+				if (options.places.length === 0) {
 					options.map.setCenter(this.lonLat(options.map, 0, 0), 1);
 				} else if (options.places.length > 1) {
 					options.map.zoomToExtent(options.markers.getDataExtent(), false);
@@ -287,7 +287,7 @@
 				}
 				if (options.type != 'resultset') {
 					accepts.push('text/turtle');
-					formats.push('ttl')
+					formats.push('ttl');
 				}
 				var ajaxOptions = $.extend({
 					url: options.sparqlURL || this.sparqlURL,

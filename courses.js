@@ -29,6 +29,8 @@ define(['jquery', 'underscore', 'rdfstore', 'dataox', 'jquery.dataTables', 'sele
 	};
 	var sparqlPrefixes = _.map(prefixes, function(i, k) { return 'PREFIX ' + k + ': <' + prefixes[k] + '>\n'; }).join('');
 	
+	var filterUndefined = function(t) { return t !== undefined; };
+	
 	var dataox = new DataOx();
 
 	/* Object converter - borrowed from http://snook.ca/archives/javascript/testing_for_a_v
@@ -61,11 +63,6 @@ define(['jquery', 'underscore', 'rdfstore', 'dataox', 'jquery.dataTables', 'sele
 /* Our main function 
 */
 	$(function() {
-		var dataTables = false; 
-
-		if ($.isFunction(jQuery.fn.dataTable) ) {
-			var dataTables = true;
-		}
 
 		if (dataTables) {
 			var dataTable_css_link = $("<link>", { 
@@ -107,7 +104,7 @@ define(['jquery', 'underscore', 'rdfstore', 'dataox', 'jquery.dataTables', 'sele
 			$(e).append('<div class="courses-widget-wait" style="font-family:\'Helvetica\';" align="center">Loading courses...<br/><img src="https://static.data.ox.ac.uk/loader.gif" alt="please wait"/></div>');
 
 			getData(e, options);
-		}
+		};
 
 		// constructs the query from options and sends it
 		var getData = function(e, options) {
@@ -144,10 +141,10 @@ define(['jquery', 'underscore', 'rdfstore', 'dataox', 'jquery.dataTables', 'sele
 					}
 				}, function(store) {
 					handleData(e, options, presentations, store);
-				})
+				});
 			});
 
-		}
+		};
 
 		// handles the query results 
 		var handleData = function(e, options, presentations, store) {
@@ -175,7 +172,7 @@ define(['jquery', 'underscore', 'rdfstore', 'dataox', 'jquery.dataTables', 'sele
 
 			var tableHeaderCells = "";
 			var columnsToDisplay = {};
-			if (options.displayColumns != "") {
+			if (options.displayColumns !== "") {
 				columnsToDisplay = options.displayColumns.split(" ");
 				columnsToDisplay = oc(columnsToDisplay);
 			} else {
@@ -228,7 +225,6 @@ define(['jquery', 'underscore', 'rdfstore', 'dataox', 'jquery.dataTables', 'sele
 					if (start && columnsToDisplay.start) {
 						start = start.object;
 						start = oneOf(start, 'time:inXSDDateTime', 'rdf:value').valueOf();
-
 						var startTime = ""; 
 						var startHour = start.getHours();
 						if (startHour > 2) {
@@ -236,7 +232,6 @@ define(['jquery', 'underscore', 'rdfstore', 'dataox', 'jquery.dataTables', 'sele
 							startTime = " " + (startHour > 12 ? startHour - 12 : startHour) + ":" + (startMinutes < 10 ? "0" : "") + startMinutes + " " + (startHour > 11 ? "PM" : "AM");
 						}
 						var startFormatted = weekday[start.getDay()] + " " + start.getDate()+ " " + months[start.getMonth()]  + " " + start.getFullYear() + startTime;
-
 						cells.start = startFormatted;
 					}
 
@@ -254,10 +249,10 @@ define(['jquery', 'underscore', 'rdfstore', 'dataox', 'jquery.dataTables', 'sele
 						var subjects = _.filter(_.map(all(course, r('dcterms:subject')), function(t) {
 							var subject = t.object;
 							// Ignore JACS codes
-							if (subject.nominalValue.indexOf('http://jacs.dataincubator.org/') == 0)
+							if (subject.nominalValue.indexOf('http://jacs.dataincubator.org/') !== 0)
 								return undefined;
 							return get(subject, r('skos:prefLabel')).object.valueOf();
-						}), function(t) { return t != undefined; });
+						}), filterUndefined);
 						cells.subject = $('<span>').text(subjects.join(', '));
 					}
 
@@ -340,10 +335,11 @@ define(['jquery', 'underscore', 'rdfstore', 'dataox', 'jquery.dataTables', 'sele
 				}
 				$(e).children(".course-results-table").dataTable( {
 					"aoColumnDefs": dataTablesColumnsConfig
+					iDisplayLength: 25
 				} );
 			}
 
-		}
+		};
 
 		$('.courses-widget-container').each(function(i, e){ setUp(e);});
 	});
