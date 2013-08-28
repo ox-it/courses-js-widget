@@ -32,7 +32,7 @@ define(['jquery', 'underscore', 'rdfstore', 'dataox', 'jquery.dataTables', 'sele
 	var filterUndefined = function(t) { return t !== undefined; };
 	
 	var dataox = new DataOx();
-
+	
 	/* Object converter - borrowed from http://snook.ca/archives/javascript/testing_for_a_v
 	 */
 	function oc(a) {
@@ -64,14 +64,13 @@ define(['jquery', 'underscore', 'rdfstore', 'dataox', 'jquery.dataTables', 'sele
 */
 	$(function() {
 
-		if (dataTables) {
-			var dataTable_css_link = $("<link>", { 
-				rel: "stylesheet", 
-				type: "text/css", 
-				href: "//static.data.ox.ac.uk/lib/dataTables/css/jquery.dataTables.css" 
-			});
-			dataTable_css_link.appendTo('head');
-		}
+
+		var dataTable_css_link = $("<link>", { 
+			rel: "stylesheet", 
+			type: "text/css", 
+			href: "//static.data.ox.ac.uk/lib/dataTables/css/jquery.dataTables.css" 
+		});
+		dataTable_css_link.appendTo('head');
 
 		var css_link = $("<link>", { 
 			rel: "stylesheet", 
@@ -321,23 +320,22 @@ define(['jquery', 'underscore', 'rdfstore', 'dataox', 'jquery.dataTables', 'sele
 			$(e).append($noDatesToggle);
 
 			$(e).append(table);
-			if (dataTables) {
-			  var dataTablesColumnsConfig = new Array();
-			  var columnCount = 0;
-				for (var column in columnsToDisplay) {
-					switch (column) {
-						case 'start':
-							dataTablesColumnsConfig.push({ "aTargets":[columnCount], "bSortable":true, "sType":"date"});
-							break;
-						default: break;
-					}
-					columnCount++;
+
+		  var dataTablesColumnsConfig = new Array();
+		  var columnCount = 0;
+			for (var column in columnsToDisplay) {
+				switch (column) {
+					case 'start':
+						dataTablesColumnsConfig.push({ "aTargets":[columnCount], "bSortable":true, "sType":"date"});
+						break;
+					default: break;
 				}
-				$(e).children(".course-results-table").dataTable( {
-					aoColumnDefs: dataTablesColumnsConfig,
-					iDisplayLength: 25
-				} );
+				columnCount++;
 			}
+			$(e).children(".course-results-table").dataTable( {
+				aoColumnDefs: dataTablesColumnsConfig,
+				iDisplayLength: 25
+			} );
 
 		};
 
