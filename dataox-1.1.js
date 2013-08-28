@@ -314,7 +314,19 @@
 						} else {
 							callback(data);
 						}
-					}
+					},
+                                        error: function(xhr, textStatus, errorThrown) {
+                                             console.log(textStatus);
+                                             console.log(errorThrown);
+                                        },
+                                        xhr: _.bind(function() {
+                                            if (this.supportsCORS)
+                                                return new XMLHttpRequest();
+                                            else if (window.XDomainRequest)
+                                                return new XDomainRequest();
+                                            else
+                                                throw new Error('No CORS support');
+                                        }, this)
 				}, options.ajaxOptions || {});
 				$.ajax(ajaxOptions);
 			},
