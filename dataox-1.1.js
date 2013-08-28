@@ -292,7 +292,7 @@
 				var ajaxOptions = $.extend({
 					url: options.sparqlURL || this.sparqlURL,
 					type: "POST",
-					headers: {Accept: accepts.join(', ')},
+					//headers: {Accept: accepts.join(', ')},
 					data: {
 						query: options.query,
 						common_prefixes: options.commonPrefixes ? "on" : "",
