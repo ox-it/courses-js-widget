@@ -104,7 +104,7 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 			}
 
 			if (!options.includeContinuingEducation) {
-//				params.q = '*+NOT+offeredBy.label:"Department+of+Continuing+Education"';
+				params.q = '* NOT offeredBy.label:"Department of Continuing Education"'; // TODO getting a 500 here
 			}
 
 			if (options.units) {
@@ -212,8 +212,8 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 					cells.subject = $('<span>').text(notJACS.join(', '));
 				}
 
-				var venue = presentation.venue;
-				if (venue && 'venue' in columnsToDisplay) {
+				if ('venue' in columnsToDisplay) {
+					var venue = presentation.venue;
 					cells.venue = $('<span>').text(venue.label ? venue.label : '-');
 				}
 
@@ -222,37 +222,28 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 					cells.provider = provider ? provider : '-';
 				}
 
-				if ('description' in columnsToDisplay) {
-					var description = presentation.description
+				var description = presentation.description;
+				if (description && 'description' in columnsToDisplay) {
 					cells.description = '<td class="course-description">' + description + '</td>';
 				}
 
+				var eligibility = presentation.elibility;
+				if (eligibility && 'eligibility' in columnsToDisplay) {
+					cells.eligibility = '<td class="course-eligibility">' + eligbility.label + '</td>';
+				}
+
+				homepage = presentation.homepage
+				if (homepage && 'info' in columnsToDisplay) {
+					cells.info = $('<td class="course-info">').append('<a href="' + homepage.uri + '">More info</a>');
+				}
 
 				var row = $("<tr>");
 
 				for(var column in columnsToDisplay) {
 					row.append($('<td>').append(cells[column]));
 				}
+
 				tbody.append(row);
-				continue; // TODO what is this doing here? get rid of it.
-
-
-				if ('eligibility' in columnsToDisplay) {
-					var courseEligibility = "";
-					if (binding.presentationRegulations) {
-						courseEligibility = binding.presentationRegulations.value;
-					}
-					rowToDisplay.eligibility = '<td class="course-eligibility">' + courseEligibility + '</td>';
-				}
-				if ('info' in columnsToDisplay) {
-					var courseInfo = "";
-					if (binding.courseURL) {
-						courseInfo = binding.courseURL.value;
-					}
-					rowToDisplay.info = '<td class="course-info">' + courseInfo + '</td>';
-				}
-
-
 			}
 
 			var tableFoot = '</tbody></table>';
