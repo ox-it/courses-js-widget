@@ -8,6 +8,7 @@ window.require = {
       "underscore": "lib/underscore/underscore-min",
     },
     shim: {
+      "jquery": {exports: "$"},
       "jquery.dataTables": {deps: ["jquery"]},
       "jquery-ui": {deps: ["jquery"], exports: 'require'},
       "underscore": {exports: "_"},
