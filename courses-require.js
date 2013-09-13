@@ -3,13 +3,13 @@ window.require = {
     enforceDefine: true,
     paths: {
       "jquery": "lib/jQuery/jquery.min",
-      "underscore": "lib/underscore/underscore-min",
       "jquery.dataTables": "lib/dataTables/js/jquery.dataTables.min",
       "jquery-ui": "lib/jQuery/jquery-ui.min",
+      "underscore": "lib/underscore/underscore-min",
     },
     shim: {
-      "underscore": {exports: "_"},
       "jquery.dataTables": {deps: ["jquery"]},
       "jquery-ui": {deps: ["jquery"], exports: 'require'},
+      "underscore": {exports: "_"},
     }
 };
