@@ -1,4 +1,4 @@
-require(["jquery", "courses"], function($) {
+require(["jquery-ui", "courses"], function($) {
 
   var autocomplete = function(e, options) {
     // Stolen from dataox
