@@ -60,28 +60,30 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 		});
 		css_link.appendTo('head');
 
+
 		// creates an options object with parameters from the containing div attributes
 		// and then passes the element and the options on to getData
 		var setUp = function(e) {
 			options = {};
 			options.withoutDates = false;
 			options.title = ($(e).attr("data-title"))? $(e).attr("data-title") : "Courses";
-			options.displayColumns = ($(e).attr("data-displayColumns"))? $(e).attr("data-displayColumns") : ""; // TODO trim this for whitespace first
-			
-			
+			options.displayColumns = ($(e).attr("data-displayColumns"))? $(e).attr("data-displayColumns") : ""; 
+
 			options.units = ($(e).attr("data-providedBy") || "").split(' ');
-			
+
 			options.skill = ($(e).attr("data-skill"))? "https://data.ox.ac.uk/id/ox-rdf/descriptor/" + $(e).attr("data-skill") : "";
 			options.researchMethod = ($(e).attr("data-researchMethod"))? "https://data.ox.ac.uk/id/ox-rm/descriptor/" + $(e).attr("data-researchMethod") : "";	         
 			options.eligibilities = ($(e).attr("data-eligibilities"))? $(e).attr("data-eligibilities") : "";//"PU";
 			options.startingBefore = ($(e).attr("data-startingBefore"))? $(e).attr("data-startingBefore") : "";
 			options.startingAfter = ($(e).attr("data-startingAfter"))? $(e).attr("data-startingAfter") : "now";
-			options.includeContinuingEducation = false;
+			options.includeContinuingEducation = false; // TODO should this be hardcoded false?
 
 			if (options.startingAfter == "now") options.startingAfter = now();
 
 			$(e).append('<h2 class="courses-widget-title">'+options.title+'</h2>');
 			$(e).append('<div class="courses-widget-wait" style="font-family:\'Helvetica\';" align="center">Loading courses...<br/><img src="https://static.data.ox.ac.uk/loader.gif" alt="please wait"/></div>');
+
+			$(e).children(".courses-widget-wait").show();
 
 			getData(e, options);
 		};
@@ -94,15 +96,28 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 				subjectFilterValue = options.researchMethod;
 			}
 
-			// TODO handle some options please :)
+			var params = {
+				'format'    : 'js',
+				'type'      : 'presentation',
+				'q'         : '*',
+				'page_size' : 10000,
+			}
+
+			if (!options.includeContinuingEducation) {
+//				params.q = '*+NOT+offeredBy.label:"Department+of+Continuing+Education"';
+			}
+
+			if (options.units) {
+				params['filter.offeredByAncestor.uri'] = options.units[0] // TODO handle multiple
+			} else {
+				params['filter.offeredByAncestor.uri'] = 'http://oxpoints.oucs.ox.ac.uk/id/00000000';
+			}
 
 			$.ajax({
-					url : '//data.ox.ac.uk/search/?format=js&q=%2A+NOT+offeredBy.label%3A%22Department+of+Continuing+Education%22&type=presentation',
+					url : '//data.ox.ac.uk/search/',
+					data : params,
 					jsonpCallback : 'callback',
 					dataType: 'jsonp',
-					beforeSend : function() {
-						$(e).children(".courses-widget-wait").show();
-					},
 					success : function(json) {
 						handleData(e, options, json)
 					},
@@ -133,7 +148,7 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 			var columnsToDisplay = {};
 
 			if (options.displayColumns !== "") {
-				columnsToDisplay = oc(options.displayColumns.split(" "));
+				columnsToDisplay = oc(options.displayColumns.replace(/^\s+|\s+$/g, '').split(" ")); // trim whitespace and split by spaces
 			} else {
 				// if no columns specified, default to all available
 				columnsToDisplay = columnsAvailable;
@@ -174,9 +189,9 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 				}
 
 				var title = presentation.label
-				var applyTo = presentation.applyTo;     // TODO we are not getting applyTo yet in the field
+				var applyTo = presentation.applyTo;
 
-				if ('title' in columnsToDisplay) {
+				if (title && columnsToDisplay.title) {
 					title = title ? title.valueOf() : '—';
 					if (applyTo)
 						cells.title = $('<a>', {title: title, href: applyTo}).text(title);
@@ -184,26 +199,23 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 						cells.title = $('<span>', {title: title}).text(title);
 				}
 
-				/* TODO we are not getting subjects yet
-				if ('subject' in columnsToDisplay) {
-					var subjects = _.filter(_.map(all(course, r('dcterms:subject')), function(t) {
-						var subject = t.object;
-						// Ignore JACS codes
-						if (subject.nominalValue.indexOf('http://jacs.dataincubator.org/') !== 0)
-							return undefined;
-						return get(subject, r('skos:prefLabel')).object.valueOf();
-					}), filterUndefined);
-					cells.subject = $('<span>').text(subjects.join(', '));
-				}
-				*/
+				var subjects = presentation.subject;
+				if (subjects && columnsToDisplay.subject) {
 
-				/* TODO we are not getting venues yet
-				var venue = oneOf(presentation, 'xcri:venue');
-				if (venue && 'venue' in columnsToDisplay) {
-					var venueLabel = oneOf(venue, 'rdfs:label', 'skos:prefLabel', 'dc:title');
-					cells.venue = $('<span>').text(venueLabel ? venueLabel.valueOf() : "—");
+					var notJACS = new Array();
+					for (j in subjects) {
+						if (subjects[j].uri.indexOf('http://jacs.dataincubator.org/') !== 0) { // Ignore JACS codes
+							notJACS.push(subjects[j].label);
+						}
+					}
+
+					cells.subject = $('<span>').text(notJACS.join(', '));
 				}
-				*/
+
+				var venue = presentation.venue;
+				if (venue && 'venue' in columnsToDisplay) {
+					cells.venue = $('<span>').text(venue.label ? venue.label : '-');
+				}
 
 				if ('provider' in columnsToDisplay) {
 					var provider = presentation.offeredBy.label
