@@ -1,4 +1,7 @@
-body { font-family: 'Verdana', 'Arial', sans-serif }
+body {
+  font-family: 'Verdana', 'Arial', sans-serif;
+  font-size: 0.9em;
+}
 
 h1, h2 { border-bottom: 2px solid #002147;
          color: #002147; } 
