@@ -114,7 +114,7 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 			}
 
 			$.ajax({
-					url : '//data.ox.ac.uk/search/',
+					url : 'https://data.ox.ac.uk/search/',
 					data : params,
 					jsonpCallback : 'callback',
 					dataType: 'jsonp',
@@ -176,8 +176,9 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 
 				var cells = {};
 
-				var start = new Date(presentation.start.time * 1000);
-				if (start && columnsToDisplay.start) {
+				var startString = presentation.start.time
+				if (startString && columnsToDisplay.start) {
+					start = new Date(startString);
 					var startTime = ""; 
 					var startHour = start.getHours();
 					if (startHour > 2) {
@@ -194,7 +195,7 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 				if (title && columnsToDisplay.title) {
 					title = title ? title.valueOf() : '—';
 					if (applyTo)
-						cells.title = $('<a>', {title: title, href: applyTo}).text(title);
+						cells.title = $('<a>', {title: title, href: applyTo.uri}).text(title); // TODO fix these links
 					else
 						cells.title = $('<span>', {title: title}).text(title);
 				}
@@ -229,7 +230,7 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 
 				var eligibility = presentation.elibility;
 				if (eligibility && 'eligibility' in columnsToDisplay) {
-					cells.eligibility = $('<span>').text(eiligibility.label);
+					cells.eligibility = $('<span>').text(eligibility.label);
 				}
 
 				homepage = presentation.homepage
