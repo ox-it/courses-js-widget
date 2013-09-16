@@ -69,74 +69,74 @@
 <dl class="outer">
 <dt>data-providedBy</dt>
 <dd>
-<dl class="inner">
-<dt>Filters on:</dt>
-<dd>Units (divisions or departments) offering the course</dd>
-<dt>Value:</dt>
-<dd>The Oxpoints URI of the unit. To find this for your unit, you can use the <a href="#oxpoints">Oxpoints URI finder</a> below.</dd>
-<dt>Default:</dt>
-<dd>"http://oxpoints.oucs.ox.ac.uk/id/00000000" (University of Oxford)
-<p id="unit-note"><strong>Please note:</strong> if no unit is specified, the widget will display all courses offered by the University. This is a very large list that will take a long time to fetch. <!-- To find a unit's oxpoints uri, use the widget below. --></p>
-</dd>
-<dt>Example:</dt>
-<dd>data-providedBy="http://oxpoints.oucs.ox.ac.uk/id/00000000"</dd>
-</dl>
+  <dl class="inner">
+  <dt>Filters on:</dt>
+  <dd>Units (divisions or departments) offering the course</dd>
+  <dt>Value:</dt>
+  <dd>The Oxpoints URI of the unit. To find this for your unit, you can use the <a href="#oxpoints">Oxpoints URI finder</a> below.</dd>
+  <dt>Default:</dt>
+  <dd>"http://oxpoints.oucs.ox.ac.uk/id/00000000" (University of Oxford)
+  <p id="unit-note"><strong>Please note:</strong> if no unit is specified, the widget will display all courses offered by the University. This is a very large list that will take a long time to fetch. <!-- To find a unit's oxpoints uri, use the widget below. --></p>
+  </dd>
+  <dt>Example:</dt>
+  <dd>data-providedBy="http://oxpoints.oucs.ox.ac.uk/id/00000000"</dd>
+  </dl>
 </dd>
 <dt>data-startingAfter</dt>
 <dd>
-<dl class="inner">
-<dt>Filters on:</dt>
-<dd>courses starting after a date</dd>
-<dt>Value:</dt>
-<dd>Format: YYYY-MM-DDT00:00:00 or "now"</dd>
-<dt>Example:</dt>
-<dd>data-startingAfter="2013-01-01T00:00:00"</dd>
-</dl>
+  <dl class="inner">
+  <dt>Filters on:</dt>
+  <dd>courses starting after a date</dd>
+  <dt>Value:</dt>
+  <dd>Format: YYYY-MM-DDT00:00:00 or "now"</dd>
+  <dt>Example:</dt>
+  <dd>data-startingAfter="2013-01-01T00:00:00"</dd>
+  </dl>
 </dd>
 <dt>data-startingBefore</dt>
 <dd>
-<dl class="inner">
-<dt>Filters on:</dt>
-<dd>courses starting before a date</dd>
-<dt>Value:</dt>
-<dd>Format: YYYY-MM-DDT00:00:00</dd>
-<dt>Example:</dt>
-<dd>data-startingBefore="2013-01-01T00:00:00"</dd>
-</dl>
+  <dl class="inner">
+  <dt>Filters on:</dt>
+  <dd>courses starting before a date</dd>
+  <dt>Value:</dt>
+  <dd>Format: YYYY-MM-DDT00:00:00</dd>
+  <dt>Example:</dt>
+  <dd>data-startingBefore="2013-01-01T00:00:00"</dd>
+  </dl>
 </dd>
 <dt>data-skill OR data-researchMethod</dt>
 <dd>
-<dl class="inner">
-<dt>Filters on:</dt>
-<dd>courses in a particular skill area, or a quantitative/qualitative research method</dd>
-<dt>Value:</dt>
-<dd>An ox-rdf or ox-rm code. A complete list of values can be seen in data.ox:
- <ul>
-  <li><a href="https://data.ox.ac.uk/sparql/?query=SELECT+%3Fcode+%3Flabel+WHERE+{%0D%0A++%3Chttps%3A%2F%2Fdata.ox.ac.uk%2Fid%2Fox-rdf%2Fconcept-scheme%3E+skos%3AhasTopConcept%2Fskos%3Anarrower*+%3Fconcept+.%0D%0A++%3Fconcept+skos%3AprefLabel+%3Flabel+%3B%0D%0A++++skos%3Anotation+%3Fcode+.%0D%0A++FILTER+%28DATATYPE%28%3Fcode%29+%3D+%3Chttps%3A%2F%2Fdata.ox.ac.uk%2Fid%2Fox-rdf%2Fnotation%3E%29%0D%0A}+ORDER+BY+%3Flabel&format=&common_prefixes=on">Available values for data-skill (ox-rdf codes)</a></li>
-  <li><a href="https://data.ox.ac.uk/sparql/?query=SELECT+%3Fcode+%3Flabel+WHERE+{%0D%0A++%3Chttps%3A%2F%2Fdata.ox.ac.uk%2Fid%2Fox-rm%2Fconcept-scheme%3E+skos%3AhasTopConcept%2Fskos%3Anarrower*+%3Fconcept+.%0D%0A++%3Fconcept+skos%3AprefLabel+%3Flabel+%3B%0D%0A++++skos%3Anotation+%3Fcode+.%0D%0A++FILTER+%28DATATYPE%28%3Fcode%29+%3D+%3Chttps%3A%2F%2Fdata.ox.ac.uk%2Fid%2Fox-rm%2Fnotation%3E%29%0D%0A}+ORDER+BY+%3Flabel&format=&common_prefixes=on">Available values for data-researchMethod (ox-rm codes)</a></li>
- </ul>
-<dt>Example:</dt>
-<dd>data-skill="GT"</dd>
-</dl>
+  <dl class="inner">
+  <dt>Filters on:</dt>
+  <dd>courses in a particular skill area, or a quantitative/qualitative research method</dd>
+  <dt>Value:</dt>
+  <dd>An ox-rdf or ox-rm code. A complete list of values can be seen in data.ox:
+   <ul>
+    <li><a href="https://data.ox.ac.uk/sparql/?query=SELECT+%3Fcode+%3Flabel+WHERE+{%0D%0A++%3Chttps%3A%2F%2Fdata.ox.ac.uk%2Fid%2Fox-rdf%2Fconcept-scheme%3E+skos%3AhasTopConcept%2Fskos%3Anarrower*+%3Fconcept+.%0D%0A++%3Fconcept+skos%3AprefLabel+%3Flabel+%3B%0D%0A++++skos%3Anotation+%3Fcode+.%0D%0A++FILTER+%28DATATYPE%28%3Fcode%29+%3D+%3Chttps%3A%2F%2Fdata.ox.ac.uk%2Fid%2Fox-rdf%2Fnotation%3E%29%0D%0A}+ORDER+BY+%3Flabel&format=&common_prefixes=on">Available values for data-skill (ox-rdf codes)</a></li>
+    <li><a href="https://data.ox.ac.uk/sparql/?query=SELECT+%3Fcode+%3Flabel+WHERE+{%0D%0A++%3Chttps%3A%2F%2Fdata.ox.ac.uk%2Fid%2Fox-rm%2Fconcept-scheme%3E+skos%3AhasTopConcept%2Fskos%3Anarrower*+%3Fconcept+.%0D%0A++%3Fconcept+skos%3AprefLabel+%3Flabel+%3B%0D%0A++++skos%3Anotation+%3Fcode+.%0D%0A++FILTER+%28DATATYPE%28%3Fcode%29+%3D+%3Chttps%3A%2F%2Fdata.ox.ac.uk%2Fid%2Fox-rm%2Fnotation%3E%29%0D%0A}+ORDER+BY+%3Flabel&format=&common_prefixes=on">Available values for data-researchMethod (ox-rm codes)</a></li>
+   </ul>
+  <dt>Example:</dt>
+  <dd>data-skill="GT"</dd>
+  </dl>
 </dd>
 <dt>data-eligibility</dt>
 <dd>
-<dl class="inner">
-<dt>Filters on:</dt>
-<dd>who is eligible to book</dd>
-<dt>Value:</dt>
-<dd>Format: a space separated list of the following:
-<ul>
-<li>ST: staff</li>
-<li>OX: members of the University</li>
-<li>PU: public</li>
-</ul>
-</dd>
-<dt>Default:</dt>
-<dd>"ST OX PU"</dd>
-<dt>Example:</dt>
-<dd>data-eligibility="OX PU"</dd>
-</dl>
+  <dl class="inner">
+  <dt>Filters on:</dt>
+  <dd>who is eligible to book</dd>
+  <dt>Value:</dt>
+  <dd>Format: a space separated list of the following:
+  <ul>
+    <li>ST: staff</li>
+    <li>OX: members of the University</li>
+    <li>PU: public</li>
+  </ul>
+  </dd>
+  <dt>Default:</dt>
+  <dd>"ST OX PU"</dd>
+  <dt>Example:</dt>
+  <dd>data-eligibility="OX PU"</dd>
+  </dl>
 </dd>
 </dl>
 
@@ -150,16 +150,16 @@
    <dd>which columns to display in the table (and their order)</dd>
    <dt>Value:</dt>
    <dd>Format: a space-separated list of columns. The order in which they are given in the attribute is the order in which they will appear. Columns available are:
-<ul>
-<li>start</li>
-<li>title</li>
-<li>subject</li>
-<li>provider</li>
-<li>description</li>
-<li>venue</li>
-<li>eligibility</li>
-<li>info</li>
-</ul>
+    <ul>
+     <li>start</li>
+     <li>title</li>
+     <li>subject</li>
+     <li>provider</li>
+     <li>description</li>
+     <li>venue</li>
+     <li>eligibility</li>
+     <li>info</li>
+    </ul>
    </dd>
    <dt>Example:</dt>
    <dd>data-displayColumns="start title venue" (this will display only the start date, course title and venue)</dd>
