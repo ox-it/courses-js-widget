@@ -185,7 +185,7 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 						startTime = " " + (startHour > 12 ? startHour - 12 : startHour) + ":" + (startMinutes < 10 ? "0" : "") + startMinutes + " " + (startHour > 11 ? "PM" : "AM");
 					}
 					var startFormatted = weekday[start.getDay()] + " " + start.getDate()+ " " + months[start.getMonth()]  + " " + start.getFullYear() + startTime;
-					cells.start = startFormatted;
+					cells.start = $('<span>', {class: 'start'}).text(startFormatted);
 				}
 
 				var title = presentation.label
@@ -224,17 +224,17 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 
 				var description = presentation.description;
 				if (description && 'description' in columnsToDisplay) {
-					cells.description = '<td class="course-description">' + description + '</td>';
+					cells.description = $('<span>').text(description);
 				}
 
 				var eligibility = presentation.elibility;
 				if (eligibility && 'eligibility' in columnsToDisplay) {
-					cells.eligibility = '<td class="course-eligibility">' + eligbility.label + '</td>';
+					cells.eligibility = $('<span>').text(eiligibility.label);
 				}
 
 				homepage = presentation.homepage
 				if (homepage && 'info' in columnsToDisplay) {
-					cells.info = $('<td class="course-info">').append('<a href="' + homepage.uri + '">More info</a>');
+					cells.info = $('<span>').append('<a href="' + homepage.uri + '">More info</a>'); // TODO fix text and add title param
 				}
 
 				var row = $("<tr>");
@@ -267,7 +267,7 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 			for (var column in columnsToDisplay) {
 				switch (column) {
 					case 'start':
-						dataTablesColumnsConfig.push({ "aTargets":[columnCount], "bSortable":true, "sType":"date"});
+						dataTablesColumnsConfig.push({ "sWidth": '8em', "aTargets":[columnCount], "bSortable":true, "sType":"date"});
 						break;
 					default: break;
 				}
@@ -275,7 +275,8 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 			}
 			$(e).children(".course-results-table").dataTable( {
 				aoColumnDefs: dataTablesColumnsConfig,
-				"bPaginate": false
+				"bPaginate": false,
+				"sScrollY": "400px",
 			} );
 
 			$(e).children(".courses-widget-wait").hide();
