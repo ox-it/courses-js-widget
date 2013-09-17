@@ -113,6 +113,9 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 				params['filter.offeredByAncestor.uri'] = 'http://oxpoints.oucs.ox.ac.uk/id/00000000';
 			}
 
+			if(options.startingAfter) {
+				params['gte.start.time'] = options.startingAfter // TODO write a startingAfter test
+			} // TODO add a way of handling starting before
 			$.ajax({
 					url : 'https://data.ox.ac.uk/search/',
 					data : params,
