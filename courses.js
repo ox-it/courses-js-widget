@@ -76,7 +76,9 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 			options.eligibilities = ($(e).attr("data-eligibilities"))? $(e).attr("data-eligibilities") : "";//"PU";
 			options.startingBefore = ($(e).attr("data-startingBefore"))? $(e).attr("data-startingBefore") : "";
 			options.startingAfter = ($(e).attr("data-startingAfter") !== undefined) ? $(e).attr("data-startingAfter") : "now";
-			options.includeContinuingEducation = false; // TODO should this be hardcoded false?
+			options.includeContinuingEducation = false;
+
+      // TODO filter continuingEducation courses by no JACS code
 
 			if (options.startingAfter == "now") options.startingAfter = now();
 
@@ -119,18 +121,7 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 
 			// TODO add a way of handling starting before
 
-			$.ajax({
-					url : 'https://data.ox.ac.uk/search/',
-					data : params,
-					jsonpCallback : 'callback',
-					dataType: 'jsonp',
-					success : function(json) {
-						handleData(e, options, json)
-					},
-					error : function(e) {
-						console.log(e.message)
-					}
-			});
+			$.getJSON('https://data.ox.ac.uk/search/?callback=?', params, function(json) { handleData(e, options, json) } );
 
 		};
 
@@ -296,6 +287,6 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 
 		};
 
-		$('.courses-widget-container').each(function(i, e){ setUp(e);}); // TODO doesn't work for multiple widgets
+		$('.courses-widget-container').each(function(i, e){ setUp(e);});
 	});
 });
