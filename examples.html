@@ -6,13 +6,13 @@
 <link type="text/css" rel="stylesheet" media="all" href="//static.data.ox.ac.uk/lib/jquery-ui/css/smoothness/jquery-ui-1.8.custom.css"/>
 <link type="text/css" rel="stylesheet" media="all" href="demo.css"/>
 
-<script src="//rawgithub.com/ox-it/courses-js-widget/master/courses-require.js" type="text/javascript"></script>
-<script type="text/javascript">window.require.baseUrl = "https://rawgithub.com/ox-it/courses-js-widget/master/";</script>
-<script src="//rawgithub.com/ox-it/courses-js-widget/master/lib/require/require.js" type="text/javascript" data-main="courses"></script>
+<script src="../courses-js-widget/courses-require.js" type="text/javascript"></script>
+<script type="text/javascript">window.require.baseUrl = "../courses-js-widget/";</script>
+<script src="../courses-js-widget/lib/require/require.js" type="text/javascript" data-main="courses"></script>
 
 </head>
 <body>
-	
+
 <div id="main">
 
 <div id="content">
@@ -29,19 +29,19 @@
 <p>The <code>data-startingAfter</code> and <code>data-startingBefore</code> paramaters can be used to restrict dates to an interval which can be open ended.</p>
 
 <pre>
-&lt;div class="courses-widget-container" 
-     data-title="Oxford University courses in October 2012" 
-     data-displayColumns="start title provider" 
-     data-startingAfter="2012-10-01" 
-     data-startingBefore="2012-11-01" 
+&lt;div class="courses-widget-container"
+     data-title="Oxford University courses in October 2012"
+     data-displayColumns="start title provider"
+     data-startingAfter="2012-10-01"
+     data-startingBefore="2012-11-01"
      data-providedBy="http://oxpoints.oucs.ox.ac.uk/id/00000000" /&gt;&lt;div&gt;;
 </pre>
 
-<div class="courses-widget-container" 
-     data-title="Oxford University courses in October 2012" 
-     data-displayColumns="start title provider" 
-     data-startingAfter="2012-10-01" 
-     data-startingBefore="2012-11-01" 
+<div class="courses-widget-container"
+     data-title="Oxford University courses in October 2012"
+     data-displayColumns="start title provider"
+     data-startingAfter="2012-10-01"
+     data-startingBefore="2012-11-01"
      data-providedBy="http://oxpoints.oucs.ox.ac.uk/id/00000000" ></div>
 
 <h2>Showing only specific columns</h2>
@@ -49,27 +49,31 @@
 <p>If no columns are specified then all will be displayed:</p>
 
 <pre>
-&lt;div class="courses-widget-container" 
-     data-title="Oxford University Courses with no columns specified" 
+&lt;div class="courses-widget-container"
+     data-title="Oxford University Courses with no columns specified"
+     data-startingAfter="2013-01-01"
      data-providedBy="http://oxpoints.oucs.ox.ac.uk/id/23233545" /&gt;&lt;div&gt;;
 </pre>
 
-<div class="courses-widget-container" 
-     data-title="Oxford University Courses with no columns specified" 
+<div class="courses-widget-container"
+     data-title="Oxford University Courses with no columns specified"
+     data-startingAfter="2013-01-01"
      data-providedBy="http://oxpoints.oucs.ox.ac.uk/id/00000000"></div>
 
 <p>You can control which columns are displayed by using the <code>data-displayColumns</code> attribute.</p>
 
 <pre>
-&lt;div class="courses-widget-container" 
-     data-title="Oxford University Courses with just start and title columns" 
-     data-displayColumns="start title description" 
+&lt;div class="courses-widget-container"
+     data-title="Oxford University Courses with just start and title columns"
+     data-displayColumns="start title description"
+     data-startingAfter="2013-01-01"
      data-providedBy="http://oxpoints.oucs.ox.ac.uk/id/00000000" /&gt;&lt;div&gt;;
 </pre>
 
-<div class="courses-widget-container" 
-     data-title="Oxford University Courses with just start and title columns" 
-     data-displayColumns="start title description" 
+<div class="courses-widget-container"
+     data-title="Oxford University Courses with just start and title columns"
+     data-displayColumns="start title description"
+     data-startingAfter="2013-01-01"
      data-providedBy="http://oxpoints.oucs.ox.ac.uk/id/00000000" ></div>
 
 <h2>Filtering results by department</h2>
@@ -89,17 +93,17 @@ Multiple URIs can be specified separated by spaces for courses taught by both de
 </p>
 
 <pre>
-&lt;div class="courses-widget-container" 
-     data-title="Courses taught by the libraries and ITLP" 
-     data-displayColumns="start title description" 
-     data-startingAfter="" 
+&lt;div class="courses-widget-container"
+     data-title="Courses taught by the libraries and ITLP"
+     data-displayColumns="start title description"
+     data-startingAfter=""
      data-providedBy="http://oxpoints.oucs.ox.ac.uk/id/23233598 http://oxpoints.oucs.ox.ac.uk/id/53505808" /&gt;&lt;div&gt;;
 </pre>
 
-<div class="courses-widget-container" 
-     data-title="Courses taught by the libraries and ITLP" 
-     data-displayColumns="start title description" 
-     data-startingAfter="" 
+<div class="courses-widget-container"
+     data-title="Courses taught by the libraries and ITLP"
+     data-displayColumns="start title description"
+     data-startingAfter=""
      data-providedBy="http://oxpoints.oucs.ox.ac.uk/id/23233598 http://oxpoints.oucs.ox.ac.uk/id/53505808" ></div>
 
 <h2>Specifying a skill area</h2>
@@ -107,19 +111,19 @@ Multiple URIs can be specified separated by spaces for courses taught by both de
 <p>Results can be filtered by a particular skill area or research method using the <code>data-skill</code> attribute.</p>
 
 <pre>
-&lt;div class="courses-widget-container" 
-     data-title="Graduate training courses" 
+&lt;div class="courses-widget-container"
+     data-title="Graduate training courses"
      data-skill="GT"
-     data-startingAfter="" 
-     data-displayColumns="start title description" 
+     data-startingAfter=""
+     data-displayColumns="start title description"
      data-providedBy="http://oxpoints.oucs.ox.ac.uk/id/23233545" /&gt;&lt;div&gt;;
 </pre>
 
-<div class="courses-widget-container" 
-     data-title="Graduate training courses" 
+<div class="courses-widget-container"
+     data-title="Graduate training courses"
      data-skill="GT"
-     data-startingAfter="" 
-     data-displayColumns="start title description" 
+     data-startingAfter=""
+     data-displayColumns="start title description"
      data-providedBy="http://oxpoints.oucs.ox.ac.uk/id/23233545" ></div>
 
 <h2>Specifying eligibility</h2>
@@ -127,19 +131,19 @@ Multiple URIs can be specified separated by spaces for courses taught by both de
 <p>Results can be filtered by the who is eligible to book using the <code>data-eligibility</code> attribute.</p>
 
 <pre>
-&lt;div class="courses-widget-container" 
-     data-title="Courses that only staff and members of the university can book" 
+&lt;div class="courses-widget-container"
+     data-title="Courses that only staff and members of the university can book"
      data-eligibility="OX ST"
-     data-startingAfter="" 
-     data-displayColumns="start title eligibility" 
+     data-startingAfter=""
+     data-displayColumns="start title eligibility"
      data-providedBy="http://oxpoints.oucs.ox.ac.uk/id/23233545" /&gt;&lt;div&gt;;
 </pre>
 
-<div class="courses-widget-container" 
-     data-title="Courses that only staff and members of the university can book" 
+<div class="courses-widget-container"
+     data-title="Courses that only staff and members of the university can book"
      data-eligibility="OX ST"
-     data-startingAfter="" 
-     data-displayColumns="start title eligibility" 
+     data-startingAfter=""
+     data-displayColumns="start title eligibility"
      data-providedBy="http://oxpoints.oucs.ox.ac.uk/id/23233545" ></div>
 
 </div>
