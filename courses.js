@@ -18,17 +18,6 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 
 	var filterUndefined = function(t) { return t !== undefined; };
 
-	/* Object converter - borrowed from http://snook.ca/archives/javascript/testing_for_a_v
-	 */
-	function oc(a) {
-		var o = {};
-		for(var i=0;i<a.length;i++)
-		{
-			o[a[i]]=true;
-		}
-		return o;
-	}
-
 	function paddedValue(v) {
 		if (v < 10 ) {
 			v = "0"+v;
@@ -121,6 +110,8 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 
 			// TODO add a way of handling starting before
 
+			// TODO implement a search on eligibility, default OX ST
+
 			$.getJSON('https://data.ox.ac.uk/search/?callback=?', params, function(json) { handleData(e, options, json) } );
 
 		};
@@ -145,7 +136,15 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 			var columnsToDisplay = {};
 
 			if (options.displayColumns !== "") {
-				columnsToDisplay = oc(options.displayColumns.replace(/^\s+|\s+$/g, '').split(" ")); // trim whitespace and split by spaces
+
+				options.displayColumns = options.displayColumns.replace(/^\s+|\s+$/g, '') // trim whitespace and split by spaces
+				var columns = options.displayColumns.split(' ');
+
+				var columnsToDisplay = {}; // now to convert into an object
+				for (i in columns) {
+					columnsToDisplay[columns[i]] = true;
+				}
+
 			} else {
 				// if no columns specified, default to all available
 				columnsToDisplay = columnsAvailable;
@@ -225,7 +224,7 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 					cells.description = $('<span>').text(description);
 				}
 
-				var eligibility = presentation.elibility;
+				var eligibility = presentation.eligibility;
 				if (eligibility && 'eligibility' in columnsToDisplay) {
 					cells.eligibility = $('<span>').text(eligibility.label); // TODO not rendering
 				}
