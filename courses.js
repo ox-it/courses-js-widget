@@ -75,7 +75,7 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 			options.researchMethod = ($(e).attr("data-researchMethod"))? "https://data.ox.ac.uk/id/ox-rm/descriptor/" + $(e).attr("data-researchMethod") : "";	         
 			options.eligibilities = ($(e).attr("data-eligibilities"))? $(e).attr("data-eligibilities") : "";//"PU";
 			options.startingBefore = ($(e).attr("data-startingBefore"))? $(e).attr("data-startingBefore") : "";
-			options.startingAfter = ($(e).attr("data-startingAfter"))? $(e).attr("data-startingAfter") : "now";
+			options.startingAfter = ($(e).attr("data-startingAfter") !== undefined) ? $(e).attr("data-startingAfter") : "now";
 			options.includeContinuingEducation = false; // TODO should this be hardcoded false?
 
 			if (options.startingAfter == "now") options.startingAfter = now();
