@@ -189,7 +189,7 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 						startTime = " " + (startHour > 12 ? startHour - 12 : startHour) + ":" + (startMinutes < 10 ? "0" : "") + startMinutes + " " + (startHour > 11 ? "PM" : "AM");
 					}
 					var startFormatted = weekday[start.getDay()] + " " + start.getDate()+ " " + months[start.getMonth()]  + " " + start.getFullYear() + startTime;
-					cells.start = $('<span>', {class: 'start'}).text(startFormatted);
+					cells.start = startFormatted;
 				}
 
 				var title = presentation.label
@@ -271,14 +271,14 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 			for (var column in columnsToDisplay) {
 				switch (column) {
 					case 'start':
-						dataTablesColumnsConfig.push({ "sWidth": '8em', "aTargets":[columnCount], "bSortable":true, "sType":"date"});
+						dataTablesColumnsConfig.push({ "sWidth": '8em', "aTargets":[columnCount], 'sType':'date'});
 						break;
 					default: break;
 				}
 				columnCount++;
 			}
-			$(e).children(".course-results-table").dataTable( {
-				aoColumnDefs: dataTablesColumnsConfig,
+			dataTable = $(e).children(".course-results-table").dataTable( {
+				aoColumnDefs: dataTablesColumnsConfig, // TODO a useful message when no records found.
 				"bPaginate": false,
 				"sScrollY": "400px",
 			} );
