@@ -278,9 +278,13 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 				columnCount++;
 			}
 			dataTable = $(e).children(".course-results-table").dataTable( {
-				aoColumnDefs: dataTablesColumnsConfig, // TODO a useful message when no records found.
+				aoColumnDefs: dataTablesColumnsConfig,
 				"bPaginate": false,
 				"sScrollY": "400px",
+				"bScrollCollapse": true,
+				"oLanguage": {
+						"sEmptyTable" : "No matching courses found.",
+					},
 			} );
 
 			$(e).children(".courses-widget-wait").hide();
