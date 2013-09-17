@@ -5,17 +5,14 @@ require(["jquery-ui", "courses"], function($) {
 
     options = options || {};
 
-    /* If false, we use the more minimal 'autocomplete' format,
-     * otherwise we ask for full search results                 */
-    options.fullContent = !!(options.fullContent || options.focus || options.select);
-
-    e = $('#' + e);                        // get the jQuery-wrapped version
+    e = $('#' + e);                  // get the jQuery-wrapped version
     var obj = e.get(0);              // and the original DOM object
 
     searchURL = options.searchURL || $('body').attr('data-dataox-search-url') || "https://data.ox.ac.uk/search/"
+    searchURL += '?callback=?'                                // so they know it's jsonp
 
     // build the default params for AJAX calls
-    var defaultParams = {format: options.fullContent ? 'json' : 'autocomplete'};
+    var defaultParams = {format: 'js'};
     for (var i = 0; i < obj.attributes.length; i++) {
       var attribute = obj.attributes[i];
       if (attribute.name.slice(0, 18) == 'data-autocomplete-')
@@ -30,26 +27,21 @@ require(["jquery-ui", "courses"], function($) {
       $.get(searchURL, $.extend({}, defaultParams, {
         q: "uri:\""+originalVal+"\""
       }), function(data) {
-        if (options.fullContent)
-          e.val(data.hits.total ? data.hits.hits[0].label : originalVal);
-        else
-          e.val(data ? data[0].label : originalVal);
+        e.val(data.hits.total ? data.hits.hits[0].label : originalVal);
       }, 'json');
     }
     e.autocomplete({
-      source: function(request, callback) {
-        $.get(searchURL, $.extend({}, defaultParams, {
-          q: request.term + '*'
-        }), function(data) {
-          if (options.fullContent) {
+      source: function(request, respond) {
+        $.getJSON(
+          searchURL,                                              // url
+          $.extend({}, defaultParams, { q: request.term + '*' }), // data
+          function(data) {                                        // success
             for (var i=0; i<data.hits.hits.length; i++) {
               data.hits.hits[i] = data.hits.hits[i]._source;
               data.hits.hits[i].value = data.hits.hits[i].uri;
             }
-            callback(data.hits.hits);
-          } else
-            callback(data);
-        }, 'json');
+            respond(data.hits.hits);
+        });
       },
       minLength: 2,
       focus: function(event, ui) {
