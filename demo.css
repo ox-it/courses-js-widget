@@ -1,27 +1,37 @@
 body {
-  font-family: 'Verdana', 'Arial', sans-serif;
+  font-family: Helvetica, arial, freesans, clean, sans-serif;
   font-size: 0.9em;
 }
 
-h1, h2 { border-bottom: 2px solid #002147;
-         color: #002147; } 
-
-pre { background-color: #ffffcc; }
-
-dt { font-weight: bold; }
-
-dl.outer > dt { background-color: rgb(158,206,235);
-                padding: 0.5em 0em 0.5em 0em;
-                border-bottom: 1px solid #002147;
-                border-top: 1px solid #002147;
-                font-weight: bold; 
+h1, h2 {
+  color: #002147;
 }
 
-dl.inner dt { background-color: rgb(224,222,217);
-
+pre, code {
+  background-color: #fbfbfb;
+  padding: 0.4em;
+  border: 1px solid #f1f1f1;
 }
 
-div#autocomplete-with-callback-metadata { height: 10em }
+code {
+  padding: 0.2em;
+  border-radius: 3px;
+}
 
-.courses-widget-container {  }
+dd {
+  margin-left: 1em;
+}
+
+dt {
+  font-weight: bold;
+  padding: 0.5em 0;
+}
+
+dl.outer > dt {
+  border-bottom: 1px solid #aaa;
+}
+
+div#autocomplete-with-callback-metadata {
+  height: 10em
+}
 
