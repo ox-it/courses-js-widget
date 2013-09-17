@@ -104,7 +104,7 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 			}
 
 			if (!options.includeContinuingEducation) {
-				params.q = '* NOT offeredBy.label:"Department of Continuing Education"'; // TODO getting a 500 here
+				params.q = '* NOT offeredBy.label:"Department of Continuing Education"';
 			}
 
 			if (options.units) {
@@ -115,7 +115,10 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 
 			if(options.startingAfter) {
 				params['gte.start.time'] = options.startingAfter // TODO write a startingAfter test
-			} // TODO add a way of handling starting before
+			}
+
+			// TODO add a way of handling starting before
+
 			$.ajax({
 					url : 'https://data.ox.ac.uk/search/',
 					data : params,
@@ -198,7 +201,7 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 				if (title && columnsToDisplay.title) {
 					title = title ? title.valueOf() : '—';
 					if (applyTo)
-						cells.title = $('<a>', {title: title, href: applyTo.uri}).text(title); // TODO fix these links
+						cells.title = $('<a>', {title: title, href: applyTo.uri}).text(title);
 					else
 						cells.title = $('<span>', {title: title}).text(title);
 				}
@@ -233,12 +236,12 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 
 				var eligibility = presentation.elibility;
 				if (eligibility && 'eligibility' in columnsToDisplay) {
-					cells.eligibility = $('<span>').text(eligibility.label);
+					cells.eligibility = $('<span>').text(eligibility.label); // TODO not rendering
 				}
 
 				homepage = presentation.homepage
 				if (homepage && 'info' in columnsToDisplay) {
-					cells.info = $('<span>').append('<a href="' + homepage.uri + '">More info</a>'); // TODO fix text and add title param
+					cells.info = $('<span>').append('<a href="' + homepage.uri + '">More info</a>');
 				}
 
 				var row = $("<tr>");
@@ -252,6 +255,7 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 
 			var tableFoot = '</tbody></table>';
 
+			/* TODO implement courses without dates
 			var linkTitle = (options.withoutDates)? "courses with specific dates" : "courses without specific dates";
 			var $noDatesToggle = $('<a class="courses-widget-no-date-toggle-link" href="#">' + linkTitle + '</a>').click(function () {
 				options.withoutDates = (options.withoutDates)? false : true;
@@ -263,6 +267,7 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 			});
 
 			$(e).append($noDatesToggle);
+			*/
 
 			$(e).append(table);
 
@@ -289,9 +294,8 @@ define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables)
 
 			$(e).children(".courses-widget-wait").hide();
 
-
 		};
 
-		$('.courses-widget-container').each(function(i, e){ setUp(e);});
+		$('.courses-widget-container').each(function(i, e){ setUp(e);}); // TODO doesn't work for multiple widgets
 	});
 });
