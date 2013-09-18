@@ -14,7 +14,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 */
 
-define(['jquery', 'underscore', 'jquery.dataTables'], function($, _, dataTables) {
+define(['jquery', 'jquery.dataTables'], function($, dataTables) {
 
 	var filterUndefined = function(t) { return t !== undefined; };
 
