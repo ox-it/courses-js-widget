@@ -101,10 +101,12 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			}
 
 			if(options.startingAfter) {
-				params['gte.start.time'] = options.startingAfter // TODO write a startingAfter test
+				params['gte.start.time'] = options.startingAfter
 			}
 
-			// TODO add a way of handling starting before
+			if(options.startingBefore) {
+				params['lt.start.time'] = options.startingBefore
+			}
 
 			// TODO implement a search on eligibility, default OX ST
 
