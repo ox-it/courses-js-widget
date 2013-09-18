@@ -1,4 +1,4 @@
-window.require = {
+var require = {
     baseUrl: "//static.data.ox.ac.uk/courses-js-widget/",
     enforceDefine: true,
     paths: {
