@@ -3,8 +3,19 @@ body {
   font-size: 0.9em;
 }
 
+div#main {
+  margin: 4em auto 0 auto;
+  width: 95%;
+  max-width: 1000px;
+}
+
+h1 {
+  font-size: 3em;
+}
+
 h1, h2 {
   color: #002147;
+  margin-top: 1em;
 }
 
 pre, code {
@@ -20,15 +31,17 @@ code {
 
 dd {
   margin-left: 1em;
+  margin-top: 0.5em;
 }
 
 dt {
   font-weight: bold;
-  padding: 0.5em 0;
+  padding: 0.5em 0.2em;
 }
 
 dl.outer > dt {
   border-bottom: 1px solid #aaa;
+  margin-top: 1em;
 }
 
 div#autocomplete-with-callback-metadata {
