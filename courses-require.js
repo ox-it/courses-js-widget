@@ -1,5 +1,5 @@
 var require = {
-    baseUrl: "//static.data.ox.ac.uk/courses-js-widget/",
+    baseUrl: window.baseUrl || "//static.data.ox.ac.uk/courses-js-widget/", // hack for local testing
     enforceDefine: true,
     paths: {
       "jquery": "lib/jQuery/jquery.min",

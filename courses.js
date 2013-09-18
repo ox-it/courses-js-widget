@@ -30,24 +30,20 @@ define(['jquery', 'jquery.dataTables'], function($, dataTables) {
 		return d.getFullYear() + "-" + paddedValue(d.getMonth()+1) + "-" + paddedValue(d.getDate()) + "T" + paddedValue(d.getHours()) + ":" + paddedValue(d.getMinutes()) + ":" + paddedValue(d.getSeconds());
 	}
 
+	function add_css(url) {
+		if (document.createStyleSheet) {
+			document.createStyleSheet(url);
+		} else {
+			$('<link rel="stylesheet" type="text/css" href="' + url + '" />').appendTo('head'); 
+		}
+	}
 
 /* Our main function 
 */
 	$(function() {
 
-		var dataTable_css_link = $("<link>", { 
-			rel: "stylesheet", 
-			type: "text/css", 
-			href: "//static.data.ox.ac.uk/lib/DataTables/media/css/jquery.dataTables.css" 
-		});
-		dataTable_css_link.appendTo('head');
-
-		var css_link = $("<link>", { 
-			rel: "stylesheet", 
-			type: "text/css", 
-			href: "//static.data.ox.ac.uk/courses-js-widget/courses.css" 
-		});
-		css_link.appendTo('head');
+		add_css("//static.data.ox.ac.uk/lib/DataTables/media/css/jquery.dataTables.css");
+		add_css("//static.data.ox.ac.uk/courses-js-widget/courses.css");
 
 
 		// creates an options object with parameters from the containing div attributes
