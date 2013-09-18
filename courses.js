@@ -127,7 +127,6 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 					'provider': '<th class="course-provider">Provider</th>',
 					'description': '<th class="course-description">Description</th>',
 					'eligibility': '<th class="course-eligibility">Eligibility</th>',
-					'info': '<th class="course-info">Further information</th>',
 			};
 
 			var tableHeaderCells = "";
@@ -219,11 +218,6 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 				var eligibility = presentation.eligibility;
 				if (eligibility && 'eligibility' in columnsToDisplay) {
 					cells.eligibility = $('<span>').text(eligibility.label); // TODO not rendering
-				}
-
-				homepage = presentation.homepage
-				if (homepage && 'info' in columnsToDisplay) {
-					cells.info = $('<span>').append('<a href="' + homepage.uri + '">More info</a>');
 				}
 
 				var row = $("<tr>");
