@@ -4,6 +4,7 @@ var require = {
     paths: {
       "jquery": "lib/jQuery/jquery.min",
       "jquery.dataTables": "lib/dataTables/js/jquery.dataTables.min",
+      "moment": "lib/moment/moment.min",
     },
     shim: {
       "jquery": {exports: "$"},

@@ -14,7 +14,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 */
 
-define(['jquery', 'jquery.dataTables'], function($, dataTables) {
+define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
 	var filterUndefined = function(t) { return t !== undefined; };
 
@@ -34,7 +34,7 @@ define(['jquery', 'jquery.dataTables'], function($, dataTables) {
 		if (document.createStyleSheet) {
 			document.createStyleSheet(url);
 		} else {
-			$('<link rel="stylesheet" type="text/css" href="' + url + '" />').appendTo('head'); 
+			$('<link rel="stylesheet" type="text/css" href="' + url + '" />').appendTo('head');
 		}
 	}
 
@@ -155,6 +155,7 @@ define(['jquery', 'jquery.dataTables'], function($, dataTables) {
 				.append($('<thead>').append($('<tr>').html(tableHeaderCells)))
 				.append(tbody);
 
+			var moment = require('moment');
 			//var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 			var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 			var weekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -168,17 +169,10 @@ define(['jquery', 'jquery.dataTables'], function($, dataTables) {
 
 				var cells = {};
 
-				var startString = presentation.start.time
-				if (startString && columnsToDisplay.start) {
-					start = new Date(startString);
-					var startTime = ""; 
-					var startHour = start.getHours();
-					if (startHour > 2) {
-						var startMinutes = start.getMinutes();
-						startTime = " " + (startHour > 12 ? startHour - 12 : startHour) + ":" + (startMinutes < 10 ? "0" : "") + startMinutes + " " + (startHour > 11 ? "PM" : "AM");
-					}
-					var startFormatted = weekday[start.getDay()] + " " + start.getDate()+ " " + months[start.getMonth()]  + " " + start.getFullYear() + startTime;
-					cells.start = startFormatted;
+				var start = presentation.start;
+				if (start && columnsToDisplay.start) {
+					time = moment(start.time);
+					cells.start = time.format("ddd D MMM YYYY"); // Mon 1 Oct 2012
 				}
 
 				var title = presentation.label
@@ -262,7 +256,7 @@ define(['jquery', 'jquery.dataTables'], function($, dataTables) {
 			for (var column in columnsToDisplay) {
 				switch (column) {
 					case 'start':
-						dataTablesColumnsConfig.push({ "sWidth": '8em', "aTargets":[columnCount], 'sType':'date'});
+						dataTablesColumnsConfig.push({ "sWidth": '8.1em', "aTargets":[columnCount], 'sType':'date'});
 						break;
 					default: break;
 				}
