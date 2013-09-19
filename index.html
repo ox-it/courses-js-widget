@@ -99,9 +99,9 @@
   <dt>Filters on</dt>
   <dd>Courses which start after a specified date.</dd>
   <dt>Value</dt>
-  <dd>The word <code>now</code> or a date in the <a href="http://en.wikipedia.org/wiki/ISO_8601">format</a> <code>YYYY-MM-DDT00:00:00</code>. The set this attribute as empty to show all dates.</dd>
+  <dd>The word <code>now</code> or a date in the <a href="http://en.wikipedia.org/wiki/ISO_8601">format</a> <code>YYYY-MM-DDT00:00:00</code>. If set to <code>now</code>, only future courses will be shown. Set this attribute as empty to show all dates.</dd>
   <dt>Default</dt>
-  <dd><code>now</code></dd>
+  <dd><code>now</code>, if <code>data-startingBefore</code> has not been specified.</dd>
   <dt>Example</dt>
   <dd><code>data-startingAfter="2013-01-01T00:00:00"</code></dd>
   </dl>
@@ -112,7 +112,7 @@
   <dt>Filters on</dt>
   <dd>Courses which start before a specified date.</dd>
   <dt>Value</dt>
-  <dd>A date in the <a href="http://en.wikipedia.org/wiki/ISO_8601">format</a> <code>YYYY-MM-DDT00:00:00</code>.</dd>
+  <dd>The word <code>now</code> or a date in the <a href="http://en.wikipedia.org/wiki/ISO_8601">format</a> <code>YYYY-MM-DDT00:00:00</code>. If set to <code>now</code>, only future courses will be shown.</dd>
   <dt>Example</dt>
   <dd><code>data-startingBefore="2013-01-01T00:00:00"</code></dd>
   </dl>
