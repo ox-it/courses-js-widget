@@ -94,7 +94,7 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 				params.q = '* NOT offeredBy.label:"Department of Continuing Education"';
 			}
 
-			if (options.units) {
+			if (options.units[0]) {
 				params['filter.offeredByAncestor.uri'] = options.units[0] // TODO handle multiple
 			} else {
 				params['filter.offeredByAncestor.uri'] = 'http://oxpoints.oucs.ox.ac.uk/id/00000000';
@@ -107,6 +107,8 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			if(options.startingBefore) {
 				params['lt.start.time'] = options.startingBefore
 			}
+
+      // TODO should be able to specify starting before now
 
 			// TODO implement a search on eligibility, default OX ST
 
