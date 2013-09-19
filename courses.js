@@ -115,6 +115,10 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
        // params['filter.eligibility'] = options.eligibilities;
       }
 
+      if(options.skill) {
+      //  params['filter.skill'] = options.skill;
+      }
+
       // TODO should be able to specify starting before now
 
 			// TODO implement a search on eligibility, default OX ST
@@ -175,7 +179,6 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			for (var i=0, max=presentations.length; i<max; i++) {
 
 				var presentation = presentations[i]._source;
-				var course = presentation.course.uri;
 
 				var cells = {};
 
@@ -209,8 +212,8 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 					cells.subject = $('<span>').text(notJACS.join(', '));
 				}
 
-				if ('venue' in columnsToDisplay) {
-					var venue = presentation.venue;
+				var venue = presentation.venue;
+				if (venue && 'venue' in columnsToDisplay) {
 					cells.venue = $('<span>').text(venue.label ? venue.label : '-');
 				}
 
