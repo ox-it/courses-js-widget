@@ -277,7 +277,6 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			}
 			dataTable = $(e).children(".course-results-table").dataTable( {
 				aoColumnDefs: dataTablesColumnsConfig,
-				"sPaginationType": "full_numbers",
         "iDisplayLength": 25,
 				"oLanguage": {
 						"sEmptyTable" : "No matching courses found.",
