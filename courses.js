@@ -45,7 +45,6 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 		add_css("//static.data.ox.ac.uk/lib/DataTables/media/css/jquery.dataTables.css");
 		add_css("//static.data.ox.ac.uk/courses-js-widget/courses.css");
 
-
 		// creates an options object with parameters from the containing div attributes
 		// and then passes the element and the options on to getData
 		var setUp = function(e) {
@@ -107,6 +106,10 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			if(options.startingBefore) {
 				params['lt.start.time'] = options.startingBefore
 			}
+
+      if(options.withoutDates) {
+        params['filter.withoutDates'] = 'true';
+      }
 
       if(options.eligibilities) {
        // params['filter.eligibility'] = options.eligibilities;
@@ -237,8 +240,7 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
 			var tableFoot = '</tbody></table>';
 
-			/* TODO implement courses without dates
-			var linkTitle = (options.withoutDates)? "courses with specific dates" : "courses without specific dates";
+			var linkTitle = (options.withoutDates)? "Show courses with specific dates" : "Show courses without specific dates";
 			var $noDatesToggle = $('<a class="courses-widget-no-date-toggle-link" href="#">' + linkTitle + '</a>').click(function () {
 				options.withoutDates = (options.withoutDates)? false : true;
 				$(e).children('.course-results-table').remove();
@@ -249,7 +251,6 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			});
 
 			$(e).append($noDatesToggle);
-			*/
 
 			$(e).append(table);
 
