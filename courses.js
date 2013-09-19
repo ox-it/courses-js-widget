@@ -128,8 +128,6 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			//  params['filter.skill'] = options.skill;
 			}
 
-			// TODO should be able to specify starting before now
-
 			// TODO implement a search on eligibility, default OX ST
 
 			$.getJSON('https://data.ox.ac.uk/search/?callback=?', params, function(json) { handleData(e, options, json) } );
@@ -238,7 +236,7 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
 				var eligibility = presentation.eligibility;
 				if (eligibility && 'eligibility' in columnsToDisplay) {
-					cells.eligibility = $('<span>').text(eligibility.label); // TODO not rendering
+					cells.eligibility = $('<span>').text(eligibility.label); // TODO not capitalised
 				}
 
 				var row = $("<tr>");
@@ -279,9 +277,8 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			}
 			dataTable = $(e).children(".course-results-table").dataTable( {
 				aoColumnDefs: dataTablesColumnsConfig,
-				"bPaginate": false,
-				"sScrollY": "400px",
-				"bScrollCollapse": true,
+				"sPaginationType": "full_numbers",
+        "iDisplayLength": 25,
 				"oLanguage": {
 						"sEmptyTable" : "No matching courses found.",
 					},
