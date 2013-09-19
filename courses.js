@@ -59,12 +59,21 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			options.researchMethod = ($(e).attr("data-researchMethod"))? "https://data.ox.ac.uk/id/ox-rm/descriptor/" + $(e).attr("data-researchMethod") : "";	         
 			options.eligibilities = ($(e).attr("data-eligibilities"))? $(e).attr("data-eligibilities") : "OX PU";
 			options.startingBefore = ($(e).attr("data-startingBefore"))? $(e).attr("data-startingBefore") : "";
-			options.startingAfter = ($(e).attr("data-startingAfter") !== undefined) ? $(e).attr("data-startingAfter") : "now";
 			options.includeContinuingEducation = false;
 
-      // TODO filter continuingEducation courses by no JACS code
+			if ($(e).attr("data-startingAfter") !== undefined) {
+				options.startingAfter = $(e).attr("data-startingAfter");
+			} else if(options.startingBefore == "") {
+				options.startingAfter = "now";
+			}
 
-			if (options.startingAfter == "now") options.startingAfter = now();
+			if (options.startingAfter == "now") {
+				options.startingAfter = now();
+			}
+
+			if (options.startingBefore == "now") {
+				options.startingBefore = now();
+			}
 
 			$(e).append('<h2 class="courses-widget-title">'+options.title+'</h2>');
 			$(e).append('<div class="courses-widget-wait" style="font-family:\'Helvetica\';" align="center">Loading courses...<br/><img src="https://static.data.ox.ac.uk/loader.gif" alt="please wait"/></div>');
