@@ -116,19 +116,19 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 				params['lt.start.time'] = options.startingBefore
 			}
 
-      if(options.withoutDates) {
-        params['filter.withoutDates'] = 'true';
-      }
+			if(options.withoutDates) {
+				params['filter.withoutDates'] = 'true';
+			}
 
-      if(options.eligibilities) {
-       // params['filter.eligibility'] = options.eligibilities;
-      }
+			if(options.eligibilities) {
+			 // params['filter.eligibility'] = options.eligibilities;
+			}
 
-      if(options.skill) {
-      //  params['filter.skill'] = options.skill;
-      }
+			if(options.skill) {
+			//  params['filter.skill'] = options.skill;
+			}
 
-      // TODO should be able to specify starting before now
+			// TODO should be able to specify starting before now
 
 			// TODO implement a search on eligibility, default OX ST
 
