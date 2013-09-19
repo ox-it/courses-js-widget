@@ -58,7 +58,7 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
 			options.skill = ($(e).attr("data-skill"))? "https://data.ox.ac.uk/id/ox-rdf/descriptor/" + $(e).attr("data-skill") : "";
 			options.researchMethod = ($(e).attr("data-researchMethod"))? "https://data.ox.ac.uk/id/ox-rm/descriptor/" + $(e).attr("data-researchMethod") : "";	         
-			options.eligibilities = ($(e).attr("data-eligibilities"))? $(e).attr("data-eligibilities") : "";//"PU";
+			options.eligibilities = ($(e).attr("data-eligibilities"))? $(e).attr("data-eligibilities") : "OX PU";
 			options.startingBefore = ($(e).attr("data-startingBefore"))? $(e).attr("data-startingBefore") : "";
 			options.startingAfter = ($(e).attr("data-startingAfter") !== undefined) ? $(e).attr("data-startingAfter") : "now";
 			options.includeContinuingEducation = false;
@@ -107,6 +107,10 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			if(options.startingBefore) {
 				params['lt.start.time'] = options.startingBefore
 			}
+
+      if(options.eligibilities) {
+       // params['filter.eligibility'] = options.eligibilities;
+      }
 
       // TODO should be able to specify starting before now
 
