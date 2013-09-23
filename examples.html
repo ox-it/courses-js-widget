@@ -108,20 +108,22 @@ Multiple URIs can be specified separated by spaces for courses taught by any of 
 
 <h2>Specifying a skill area</h2>
 
-<p>Results can be filtered by a particular skill area or research method using the <code>data-skill</code> attribute.</p>
+<p>Results can be filtered by a particular skill area or research method using the <code>data-skill</code> or <code>data-researchMethod</code> attributes respectively.</p>
 
 <pre>
 &lt;div class="courses-widget-container"
-     data-title="Graduate training courses"
+     data-title="Graduate training courses with qualitative methods"
      data-skill="GT"
+     data-researchMethod="QL"
      data-startingAfter=""
      data-displayColumns="start title description"
      data-providedBy="http://oxpoints.oucs.ox.ac.uk/id/23233545" /&gt;&lt;div&gt;;
 </pre>
 
 <div class="courses-widget-container"
-     data-title="Graduate training courses"
+     data-title="Graduate training courses with qualitative methods"
      data-skill="GT"
+     data-researchMethod="QL"
      data-startingAfter=""
      data-displayColumns="start title description"
      data-providedBy="http://oxpoints.oucs.ox.ac.uk/id/23233545" ></div>
