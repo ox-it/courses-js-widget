@@ -86,11 +86,6 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 		// constructs the query from options and sends it
 		var getData = function(e, options) {
 
-			var subjectFilterValue = options.skill;
-			if (options.researchMethod) {
-				subjectFilterValue = options.researchMethod;
-			}
-
 			var params = {
 				'format'    : 'js',
 				'type'      : 'presentation',
@@ -121,14 +116,17 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			}
 
 			if(options.eligibilities) {
-			 // params['filter.eligibility'] = options.eligibilities;
+				// params['filter.eligibility'] = options.eligibilities;
+				// TODO implement a search on eligibility, default OX ST
 			}
 
 			if(options.skill) {
-			//  params['filter.skill'] = options.skill;
+			  params['filter.skill'] = options.skill;
 			}
 
-			// TODO implement a search on eligibility, default OX ST
+			if(options.researchMethod) {
+			  params['filter.researchMethod'] = options.researchMethod;
+			}
 
 			$.ajaxSettings.traditional = true;
 			$.getJSON('https://data.ox.ac.uk/search/?callback=?', params, function(json) { handleData(e, options, json) } );
