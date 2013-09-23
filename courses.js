@@ -102,8 +102,8 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 				params.q = '* NOT offeredBy.label:"Department of Continuing Education"';
 			}
 
-			if (options.units[0]) {
-				params['filter.offeredByAncestor.uri'] = options.units[0] // TODO handle multiple
+			if (options.units && options.units.length > 0) {
+				params['filter.offeredByAncestor.uri'] = options.units
 			} else {
 				params['filter.offeredByAncestor.uri'] = 'http://oxpoints.oucs.ox.ac.uk/id/00000000';
 			}
@@ -130,6 +130,7 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
 			// TODO implement a search on eligibility, default OX ST
 
+			$.ajaxSettings.traditional = true;
 			$.getJSON('https://data.ox.ac.uk/search/?callback=?', params, function(json) { handleData(e, options, json) } );
 
 		};
