@@ -236,7 +236,8 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
 				var eligibility = presentation.eligibility;
 				if (eligibility && 'eligibility' in columnsToDisplay) {
-					cells.eligibility = $('<span>').text(eligibility.label); // TODO not capitalised
+					capitalised = eligibility.label.charAt(0).toUpperCase() + eligibility.label.slice(1)
+					cells.eligibility = $('<span>').text(capitalised);
 				}
 
 				var row = $("<tr>");
