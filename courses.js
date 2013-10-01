@@ -103,16 +103,17 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 				params['filter.offeredByAncestor.uri'] = 'http://oxpoints.oucs.ox.ac.uk/id/00000000';
 			}
 
-			if(options.startingAfter) {
-				params['gte.start.time'] = options.startingAfter
-			}
-
-			if(options.startingBefore) {
-				params['lt.start.time'] = options.startingBefore
-			}
-
 			if(options.withoutDates) {
-				params['filter.withoutDates'] = 'true';
+				params['filter.start.time'] = '-';
+			} else {
+
+				if(options.startingAfter) {
+					params['gte.start.time'] = options.startingAfter
+				}
+
+				if(options.startingBefore) {
+					params['lt.start.time'] = options.startingBefore
+				}
 			}
 
 			if(options.eligibilities) {
@@ -158,7 +159,15 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
 				var columnsToDisplay = {}; // now to convert into an object
 				for (i in columns) {
-					columnsToDisplay[columns[i]] = true;
+					if (columns[i] == 'start' && options.withoutDates) {
+
+						// do nothing
+
+					} else {
+
+						columnsToDisplay[columns[i]] = true;
+
+					}
 				}
 
 			} else {
@@ -250,7 +259,6 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
 			var tableFoot = '</tbody></table>';
 
-            /*
 			var linkTitle = (options.withoutDates)? "Show courses with specific dates" : "Show courses without specific dates";
 			var $noDatesToggle = $('<a class="courses-widget-no-date-toggle-link" href="#">' + linkTitle + '</a>').click(function () {
 				options.withoutDates = (options.withoutDates)? false : true;
@@ -262,7 +270,6 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			});
 
 			$(e).append($noDatesToggle);
-            */
 
 			$(e).append(table);
 
