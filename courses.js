@@ -56,10 +56,11 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			options.units          = ($(e).attr("data-providedBy")  || "").split(' ');
 			options.eligibilities  = ($(e).attr("data-eligibility") || "OX PU").split(' ');
 
-			options.researchMethod = ($(e).attr("data-researchMethod"))? "https://data.ox.ac.uk/id/ox-rm/descriptor/" + $(e).attr("data-researchMethod") : "";	         
+			options.researchMethod = ($(e).attr("data-researchMethod"))? "https://data.ox.ac.uk/id/ox-rm/" + $(e).attr("data-researchMethod") : "";	         
 			options.skill          = ($(e).attr("data-skill"))         ? "https://data.ox.ac.uk/id/ox-rdf/descriptor/" + $(e).attr("data-skill") : "";
 			options.startingBefore = ($(e).attr("data-startingBefore"))? $(e).attr("data-startingBefore") : "";
-			options.includeContinuingEducation = false;
+
+			options.includeContinuingEducation = false; // hardcoded
 
 			if ($(e).attr("data-startingAfter") !== undefined) {
 				options.startingAfter = $(e).attr("data-startingAfter");
@@ -140,7 +141,7 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			}
 
 			if(options.researchMethod) {
-			  params['filter.researchMethod'] = options.researchMethod;
+			  params['filter.researchMethod.uri'] = options.researchMethod;
 			}
 
 			$.ajaxSettings.traditional = true;
