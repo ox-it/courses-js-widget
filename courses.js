@@ -53,11 +53,11 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			options.title = ($(e).attr("data-title"))? $(e).attr("data-title") : "Courses";
 			options.displayColumns = ($(e).attr("data-displayColumns"))? $(e).attr("data-displayColumns") : ""; 
 
-			options.units = ($(e).attr("data-providedBy") || "").split(' ');
+			options.units          = ($(e).attr("data-providedBy")  || "").split(' ');
+			options.eligibilities  = ($(e).attr("data-eligibility") || "OX PU").split(' ');
 
 			options.skill = ($(e).attr("data-skill"))? "https://data.ox.ac.uk/id/ox-rdf/descriptor/" + $(e).attr("data-skill") : "";
 			options.researchMethod = ($(e).attr("data-researchMethod"))? "https://data.ox.ac.uk/id/ox-rm/descriptor/" + $(e).attr("data-researchMethod") : "";	         
-			options.eligibilities = ($(e).attr("data-eligibilities"))? $(e).attr("data-eligibilities") : "OX PU";
 			options.startingBefore = ($(e).attr("data-startingBefore"))? $(e).attr("data-startingBefore") : "";
 			options.includeContinuingEducation = false;
 
@@ -116,9 +116,23 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 				}
 			}
 
-			if(options.eligibilities) {
-				// params['filter.eligibility'] = options.eligibilities;
-				// TODO implement a search on eligibility, default OX ST
+			if(options.eligibilities && options.eligibilities.length > 0) {
+				params['filter.eligibility.uri'] = []
+				for(i in options.eligibilities) {
+					eligibility = options.eligibilities[i]
+					switch(eligibility) {
+						case 'PU':
+							params['filter.eligibility.uri'].push('oxcap:eligibility-public')
+							break;
+						case 'OX':
+							params['filter.eligibility.uri'].push('oxcap:eligibility-members')
+							break;
+						case 'ST':
+							params['filter.eligibility.uri'].push('oxcap:eligibility-staff')
+							break;
+						default:
+					}
+				}
 			}
 
 			if(options.skill) {
@@ -273,8 +287,8 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
 			$(e).append(table);
 
-		  var dataTablesColumnsConfig = new Array();
-		  var columnCount = 0;
+			var dataTablesColumnsConfig = new Array();
+			var columnCount = 0;
 			for (var column in columnsToDisplay) {
 				switch (column) {
 					case 'start':
