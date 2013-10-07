@@ -53,13 +53,14 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			options.title = ($(e).attr("data-title"))? $(e).attr("data-title") : "Courses";
 			options.displayColumns = ($(e).attr("data-displayColumns"))? $(e).attr("data-displayColumns") : ""; 
 
-			options.units = ($(e).attr("data-providedBy") || "").split(' ');
+			options.units          = ($(e).attr("data-providedBy")  || "").split(' ');
+			options.eligibilities  = ($(e).attr("data-eligibility") || "OX PU").split(' ');
 
-			options.skill = ($(e).attr("data-skill"))? "https://data.ox.ac.uk/id/ox-rdf/descriptor/" + $(e).attr("data-skill") : "";
-			options.researchMethod = ($(e).attr("data-researchMethod"))? "https://data.ox.ac.uk/id/ox-rm/descriptor/" + $(e).attr("data-researchMethod") : "";	         
-			options.eligibilities = ($(e).attr("data-eligibilities"))? $(e).attr("data-eligibilities") : "OX PU";
+			options.researchMethod = ($(e).attr("data-researchMethod"))? "https://data.ox.ac.uk/id/ox-rm/" + $(e).attr("data-researchMethod") : "";	         
+			options.skill          = ($(e).attr("data-skill"))         ? "https://data.ox.ac.uk/id/ox-rdf/descriptor/" + $(e).attr("data-skill") : "";
 			options.startingBefore = ($(e).attr("data-startingBefore"))? $(e).attr("data-startingBefore") : "";
-			options.includeContinuingEducation = false;
+
+			options.includeContinuingEducation = false; // hardcoded
 
 			if ($(e).attr("data-startingAfter") !== undefined) {
 				options.startingAfter = $(e).attr("data-startingAfter");
@@ -103,29 +104,44 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 				params['filter.offeredByAncestor.uri'] = 'http://oxpoints.oucs.ox.ac.uk/id/00000000';
 			}
 
-			if(options.startingAfter) {
-				params['gte.start.time'] = options.startingAfter
-			}
-
-			if(options.startingBefore) {
-				params['lt.start.time'] = options.startingBefore
-			}
-
 			if(options.withoutDates) {
-				params['filter.withoutDates'] = 'true';
+				params['filter.start.time'] = '-';
+			} else {
+
+				if(options.startingAfter) {
+					params['gte.start.time'] = options.startingAfter
+				}
+
+				if(options.startingBefore) {
+					params['lt.start.time'] = options.startingBefore
+				}
 			}
 
-			if(options.eligibilities) {
-				// params['filter.eligibility'] = options.eligibilities;
-				// TODO implement a search on eligibility, default OX ST
+			if(options.eligibilities && options.eligibilities.length > 0) {
+				params['filter.eligibility.uri'] = []
+				for(i in options.eligibilities) {
+					eligibility = options.eligibilities[i]
+					switch(eligibility) {
+						case 'PU':
+							params['filter.eligibility.uri'].push('oxcap:eligibility-public')
+							break;
+						case 'OX':
+							params['filter.eligibility.uri'].push('oxcap:eligibility-members')
+							break;
+						case 'ST':
+							params['filter.eligibility.uri'].push('oxcap:eligibility-staff')
+							break;
+						default:
+					}
+				}
 			}
 
 			if(options.skill) {
-			  params['filter.skill'] = options.skill;
+			  params['subject.uri'] = options.skill;
 			}
 
 			if(options.researchMethod) {
-			  params['filter.researchMethod'] = options.researchMethod;
+			  params['filter.researchMethod.uri'] = options.researchMethod;
 			}
 
 			$.ajaxSettings.traditional = true;
@@ -158,7 +174,15 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
 				var columnsToDisplay = {}; // now to convert into an object
 				for (i in columns) {
-					columnsToDisplay[columns[i]] = true;
+					if (columns[i] == 'start' && options.withoutDates) {
+
+						// do nothing
+
+					} else {
+
+						columnsToDisplay[columns[i]] = true;
+
+					}
 				}
 
 			} else {
@@ -194,13 +218,16 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 					cells.start = time.format("ddd D MMM YYYY"); // Mon 1 Oct 2012
 				}
 
-				var title = presentation.label
-				var applyTo = presentation.applyTo;
+				var title    = presentation.label
+				var applyTo  = presentation.applyTo;
+				var homepage = presentation.homepage;
 
 				if (title && columnsToDisplay.title) {
 					title = title ? title.valueOf() : '—';
 					if (applyTo)
 						cells.title = $('<a>', {title: title, href: applyTo.uri}).text(title);
+					else if (homepage)
+						cells.title = $('<a>', {title: title, href: homepage.uri}).text(title);
 					else
 						cells.title = $('<span>', {title: title}).text(title);
 				}
@@ -250,7 +277,6 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
 			var tableFoot = '</tbody></table>';
 
-            /*
 			var linkTitle = (options.withoutDates)? "Show courses with specific dates" : "Show courses without specific dates";
 			var $noDatesToggle = $('<a class="courses-widget-no-date-toggle-link" href="#">' + linkTitle + '</a>').click(function () {
 				options.withoutDates = (options.withoutDates)? false : true;
@@ -262,12 +288,11 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			});
 
 			$(e).append($noDatesToggle);
-            */
 
 			$(e).append(table);
 
-		  var dataTablesColumnsConfig = new Array();
-		  var columnCount = 0;
+			var dataTablesColumnsConfig = new Array();
+			var columnCount = 0;
 			for (var column in columnsToDisplay) {
 				switch (column) {
 					case 'start':
