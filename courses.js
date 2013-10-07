@@ -218,13 +218,16 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 					cells.start = time.format("ddd D MMM YYYY"); // Mon 1 Oct 2012
 				}
 
-				var title = presentation.label
-				var applyTo = presentation.applyTo;
+				var title    = presentation.label
+				var applyTo  = presentation.applyTo;
+				var homepage = presentation.homepage;
 
 				if (title && columnsToDisplay.title) {
 					title = title ? title.valueOf() : '—';
 					if (applyTo)
 						cells.title = $('<a>', {title: title, href: applyTo.uri}).text(title);
+					else if (homepage)
+						cells.title = $('<a>', {title: title, href: homepage.uri}).text(title);
 					else
 						cells.title = $('<span>', {title: title}).text(title);
 				}
