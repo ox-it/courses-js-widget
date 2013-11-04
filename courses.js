@@ -38,6 +38,14 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 		}
 	}
 
+	function mixedContentSafeLink(text, url) {
+		if(url.indexOf('http://') == 0) {
+			return $('<a>', {title: text, href: url, target: "_blank"}).text(text);
+		} else {
+			return $('<a>', {title: text, href: url}).text(text);
+		}
+	}
+
 /* Our main function 
 */
 	$(function() {
@@ -225,9 +233,9 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 				if (title && columnsToDisplay.title) {
 					title = title ? title.valueOf() : '—';
 					if (applyTo)
-						cells.title = $('<a>', {title: title, href: applyTo.uri}).text(title);
+						cells.title = mixedContentSafeLink(title, applyTo.uri);
 					else if (homepage)
-						cells.title = $('<a>', {title: title, href: homepage.uri}).text(title);
+						cells.title = mixedContentSafeLink(title, homepage.uri);
 					else
 						cells.title = $('<span>', {title: title}).text(title);
 				}
