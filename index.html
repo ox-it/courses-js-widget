@@ -119,21 +119,30 @@
   <dd><code>data-startingBefore="2013-01-01T00:00:00"</code></dd>
   </dl>
 </dd>
-<dt>data-skill OR data-researchMethod</dt>
+<dt>data-skill</dt>
 <dd>
   <dl class="inner">
-  <dt>Future enhancement</dt>
-  <dt class="red">This has not yet been implemented.</dt>
   <dt>Filters on</dt>
-  <dd>Courses in a particular skill area, or a quantitative/qualitative research method</dd>
+  <dd>Courses in a particular skill area.</dd>
   <dt>Value</dt>
-  <dd>An ox-rdf or ox-rm code. A complete list of values can be seen in data.ox:
+  <dd>An ox-rdf code. A complete list of values can be seen in data.ox:
    <ul>
     <li><a href="https://data.ox.ac.uk/sparql/?query=SELECT+%3Fcode+%3Flabel+WHERE+{%0D%0A++%3Chttps%3A%2F%2Fdata.ox.ac.uk%2Fid%2Fox-rdf%2Fconcept-scheme%3E+skos%3AhasTopConcept%2Fskos%3Anarrower*+%3Fconcept+.%0D%0A++%3Fconcept+skos%3AprefLabel+%3Flabel+%3B%0D%0A++++skos%3Anotation+%3Fcode+.%0D%0A++FILTER+%28DATATYPE%28%3Fcode%29+%3D+%3Chttps%3A%2F%2Fdata.ox.ac.uk%2Fid%2Fox-rdf%2Fnotation%3E%29%0D%0A}+ORDER+BY+%3Flabel&format=&common_prefixes=on">Available values for data-skill (ox-rdf codes)</a></li>
-    <li><a href="https://data.ox.ac.uk/sparql/?query=SELECT+%3Fcode+%3Flabel+WHERE+{%0D%0A++%3Chttps%3A%2F%2Fdata.ox.ac.uk%2Fid%2Fox-rm%2Fconcept-scheme%3E+skos%3AhasTopConcept%2Fskos%3Anarrower*+%3Fconcept+.%0D%0A++%3Fconcept+skos%3AprefLabel+%3Flabel+%3B%0D%0A++++skos%3Anotation+%3Fcode+.%0D%0A++FILTER+%28DATATYPE%28%3Fcode%29+%3D+%3Chttps%3A%2F%2Fdata.ox.ac.uk%2Fid%2Fox-rm%2Fnotation%3E%29%0D%0A}+ORDER+BY+%3Flabel&format=&common_prefixes=on">Available values for data-researchMethod (ox-rm codes)</a></li>
    </ul>
+  </dd>
   <dt>Example</dt>
-  <dd><code>data-skill="GT"</code></dd>
+  <dd><code>data-skill="GT"</code> for Graduate Training</dd>
+  </dl>
+</dd>
+<dt>data-researchMethod</dt>
+<dd>
+  <dl class="inner">
+  <dt>Filters on</dt>
+  <dd>Courses with a particular research method.</dd>
+  <dt>Value</dt>
+  <dd><code>qualitative</code> or <code>quantitative</code></dd>
+  <dt>Example</dt>
+  <dd><code>data-researchMethod="quantitative"</code></dd>
   </dl>
 </dd>
 <dt>data-eligibility</dt>
