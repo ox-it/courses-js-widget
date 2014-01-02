@@ -129,6 +129,19 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			this.e  = element;
 			this.$e = $(element);
 
+			this.appendLoadingMessage = function() {
+				$('<div/>', {'class': 'courses-widget-wait', 'text': 'Loading courses...'})
+					.append(loadingImage())
+				  .appendTo($e);
+
+				// I don't think this is necessary any more
+				// $e.children(".courses-widget-wait").show();
+			}
+
+			this.loadingImage = function () {
+				return $('<img/>', {'src': 'https://static.data.ox.ac.uk/loader.gif', 'alt': 'Please wait'})
+			}
+
 			this.appendTitle = function(title) {
 				$e.append('<h2 class="courses-widget-title">' + title + '</h2>');
 			}
@@ -151,10 +164,8 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			var options = reader.read();
 
 			var ui = new WidgetUI(e);
-			$(e).append('<div class="courses-widget-wait" style="font-family:\'Helvetica\';" align="center">Loading courses...<br/><img src="https://static.data.ox.ac.uk/loader.gif" alt="please wait"/></div>');
-
-			$(e).children(".courses-widget-wait").show();
 			ui.appendTitle(options.title);
+			ui.appendLoadingMessage();
 
 			getData(e, options);
 		};

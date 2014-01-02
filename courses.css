@@ -28,6 +28,11 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 h2.courses-widget-title {
 }
 
+div.courses-widget-wait {
+  text-align: center;
+
+}
+
 table.course-results-table { 
   border-style: none;
   border-collapse: collapse;
