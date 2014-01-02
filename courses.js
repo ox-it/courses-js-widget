@@ -124,6 +124,16 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			return param == "now" ? now() : param;
 		}
 
+		// controls the interface of the widget
+		function WidgetUI(element) {
+			this.e  = element;
+			this.$e = $(element);
+
+			this.appendTitle = function(title) {
+				$e.append('<h2 class="courses-widget-title">' + title + '</h2>');
+			}
+		}
+
 	}
 
 /* Our main function 
@@ -140,10 +150,11 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			var reader  = new ParametersReader(new Options(), e);
 			var options = reader.read();
 
-			$(e).append('<h2 class="courses-widget-title">'+options.title+'</h2>');
+			var ui = new WidgetUI(e);
 			$(e).append('<div class="courses-widget-wait" style="font-family:\'Helvetica\';" align="center">Loading courses...<br/><img src="https://static.data.ox.ac.uk/loader.gif" alt="please wait"/></div>');
 
 			$(e).children(".courses-widget-wait").show();
+			ui.appendTitle(options.title);
 
 			getData(e, options);
 		};
