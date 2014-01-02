@@ -143,7 +143,7 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			}
 
 			this.appendTitle = function(title) {
-				$e.append('<h2 class="courses-widget-title">' + title + '</h2>');
+				$('<h2/>', {'class': 'courses-widget-title', 'text': title}).appendTo($e);
 			}
 		}
 
