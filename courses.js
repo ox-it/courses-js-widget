@@ -46,6 +46,86 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 		}
 	}
 
+	// Loads the parameters from div attributes and passses them to an Options instance
+	function ParametersReader(options, element) {
+
+		this.options = options;
+		this.e = element;
+		this.$e = $(div);
+
+		this.fetch = function(param) {
+			return $e.attr(param)
+		}
+
+		this.read = function() {
+			options.setTitle(fetch("data-title"));
+			options.setDisplaycolumns(fetch("data-displayColumns"));
+			options.setUnits(fetch("data-providedBy"));
+			options.setEligibilities(fetch("data-eligibility"));
+			options.setResearchMethod(fetch("data-researchMethod"));
+			options.setSkill(fetch("data-skill"));
+
+			options.setStartingFilters(
+				fetch("data-startingBefore"),
+				fetch("data-startingAfter")
+			);
+
+			return options;
+		}
+
+	}
+
+	// Holding the parameters for the widget
+	function Options() {
+
+		this.withoutDates = false;
+		this.includeContinuingEducation = false;
+
+		this.setTitle = function(title) {
+			this.title = title || "Courses";
+		}
+
+		this.setDisplayColumns = function(displayColumns) {
+			this.displayColumns = displayColumns || "";
+		}
+
+		// assumes a space separated list
+		this.setUnits = function(units) {
+			this.units = (units || "").split(' ');
+		}
+
+		// assumes a space separated list
+		this.setEligibilities = function(eligibilities) {
+			this.eligibilities = (eligibilities || "OX PU").split(' ');
+		}
+
+		this.setResearchMethod = function(method) {
+			this.researchMethod = method ? "https://data.ox.ac.uk/id/ox-rm/" + method : "";
+		}
+
+		this.setSkill = function(skill) {
+			this.skill = skill ? "https://data.ox.ac.uk/id/ox-rdf/descriptor/" + skill : "";
+		}
+
+		this.setStartingFilters(before, after) {
+			if (before == undefined) {
+				if (after == undefined) {
+					after = "now"; // set default to courses in the future
+				}
+			}
+
+			// set to either now(), the current time, or failing these an empty string
+			this.startingAfter  = readNowAsCurrentTime(after || "");
+			this.startingBefore = readNowAsCurrentTime(before || "");
+		}
+
+		// helper function for setting dates
+		this.readNowAsCurrentTime = function(param) {
+			return param == "now" ? now() : param;
+		}
+
+	}
+
 /* Our main function 
 */
 	$(function() {
@@ -56,33 +136,9 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 		// creates an options object with parameters from the containing div attributes
 		// and then passes the element and the options on to getData
 		var setUp = function(e) {
-			options = {};
-			options.withoutDates = false;
-			options.title = ($(e).attr("data-title"))? $(e).attr("data-title") : "Courses";
-			options.displayColumns = ($(e).attr("data-displayColumns"))? $(e).attr("data-displayColumns") : ""; 
 
-			options.units          = ($(e).attr("data-providedBy")  || "").split(' ');
-			options.eligibilities  = ($(e).attr("data-eligibility") || "OX PU").split(' ');
-
-			options.researchMethod = ($(e).attr("data-researchMethod"))? "https://data.ox.ac.uk/id/ox-rm/" + $(e).attr("data-researchMethod") : "";	         
-			options.skill          = ($(e).attr("data-skill"))         ? "https://data.ox.ac.uk/id/ox-rdf/descriptor/" + $(e).attr("data-skill") : "";
-			options.startingBefore = ($(e).attr("data-startingBefore"))? $(e).attr("data-startingBefore") : "";
-
-			options.includeContinuingEducation = false; // hardcoded
-
-			if ($(e).attr("data-startingAfter") !== undefined) {
-				options.startingAfter = $(e).attr("data-startingAfter");
-			} else if(options.startingBefore == "") {
-				options.startingAfter = "now";
-			}
-
-			if (options.startingAfter == "now") {
-				options.startingAfter = now();
-			}
-
-			if (options.startingBefore == "now") {
-				options.startingBefore = now();
-			}
+			var reader  = new ParametersReader(new Options(), e);
+			var options = reader.read();
 
 			$(e).append('<h2 class="courses-widget-title">'+options.title+'</h2>');
 			$(e).append('<div class="courses-widget-wait" style="font-family:\'Helvetica\';" align="center">Loading courses...<br/><img src="https://static.data.ox.ac.uk/loader.gif" alt="please wait"/></div>');
