@@ -285,6 +285,10 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
 			var tableFoot = '</tbody></table>';
 
+			/*
+			 * Disable the courses without dates link whilst the functionality is still being improved
+			 *
+
 			var linkTitle = (options.withoutDates)? "Show courses with specific dates" : "Show courses without specific dates";
 			var $noDatesToggle = $('<a class="courses-widget-no-date-toggle-link" href="#">' + linkTitle + '</a>').click(function () {
 				options.withoutDates = (options.withoutDates)? false : true;
@@ -296,6 +300,8 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			});
 
 			$(e).append($noDatesToggle);
+
+			*/
 
 			$(e).append(table);
 
