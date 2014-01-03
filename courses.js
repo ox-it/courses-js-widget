@@ -134,23 +134,23 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 		this.e  = element;
 		this.$e = $(element);
 
-		this.appendLoadingMessage = function() {
+		this.addLoadingMessage = function() {
 			$('<div/>', {'class': 'courses-widget-wait', 'text': 'Loading courses...'})
-				.append(loadingImage())
-			  .appendTo($e);
+				.append(this.loadingImage())
+			  .appendTo(this.$e);
 
-			$e.children(".courses-widget-wait").show();
+			this.$e.children(".courses-widget-wait").show();
 		}
 
 		this.hideLoadingMessage = function() {
-			$e.children(".courses-widget-wait").hide();
+			this.$e.children(".courses-widget-wait").hide();
 		}
 		this.loadingImage = function() {
 			return $('<img/>', {'src': 'https://static.data.ox.ac.uk/loader.gif', 'alt': 'Please wait'})
 		}
 
 		this.addTitle = function(title) {
-			$('<h2/>', {'class': 'courses-widget-title', 'text': title}).appendTo($e);
+			$('<h2/>', {'class': 'courses-widget-title', 'text': title}).appendTo(this.$e);
 		}
 
 		this.addNoDatesLink = function() {
@@ -169,31 +169,28 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 		}
 
 		this.addTable = function(tableHtml) {
-			$e.append(tableHtml);
+			this.$e.append(tableHtml);
 		}
 
 		this.configureDataTables = function(availableColumns) {
 
-			var dataTablesColumnsConfig = new Array();
-			var columnCount = 0;
+			var config = new Array();
+			var i = 0;
 
-			for (var column in availableColumns) {
-				switch (column.name) {
-					case 'start':
-						dataTablesColumnsConfig.push({ "sWidth": '8.1em', "aTargets":[columnCount], 'sType':'date'});
-						break;
-					default: break;
+			for (var c in availableColumns) {
+				if (c == 'START') {
+					config.push({ "sWidth": '8.1em', "aTargets":[i], 'sType':'date'});
 				}
-				columnCount++;
+				i++;
 			}
 
-			dataTable = $e.children(".course-results-table").dataTable( {
-				aoColumnDefs: dataTablesColumnsConfig,
+			dataTable = this.$e.children(".course-results-table").dataTable({
+				aoColumnDefs: config,
 				"iDisplayLength": 25,
 				"oLanguage": {
 					"sEmptyTable" : "No matching courses found.",
 				},
-			} );
+			});
 
 		}
 	}
@@ -210,14 +207,15 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			'page_size' : 10000,
 		}
 
-		this.Fields = {
-			QUERY         : 'q',
-			UNIT_ANCESTOR : 'filter.offeredByAncestor',
-			WITHOUT_DATES : 'filter.start.time',
-			START_AFTER   : 'gte.start.time',
-			START_BEFORE  : 'lt.start.time',
-			SUBJECT_URI   : 'subject.uri',
-			METHOD_URI    : 'filter.researchMethod.uri'
+		this.Params = {
+			QUERY            : 'q',
+			UNIT_ANCESTOR    : 'filter.offeredByAncestor.uri',
+			WITHOUT_DATES    : 'filter.start.time',
+			START_AFTER      : 'gte.start.time',
+			START_BEFORE     : 'lt.start.time',
+			SUBJECT_URI      : 'subject.uri',
+			METHOD_URI       : 'filter.researchMethod.uri',
+			ELIGIBILITY_URIS : 'filter.eligibility.uri'
 		}
 
 		this.prepare = function(options) {
@@ -241,21 +239,21 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 		}
 
 		this.setQuery = function(includeCE) {
-			set(Fields.QUERY, includeCE ? '*' : '* NOT offeredBy.label:"Department of Continuing Education"');
+			this.set(this.Params.QUERY, includeCE ? '*' : '* NOT offeredBy.label:"Department of Continuing Education"');
 		}
 
 		this.setUnits = function(units) {
 			var uri = (units && units.length > 0) ? units : 'http://oxpoints.oucs.ox.ac.uk/id/00000000';
-			set(Fields.UNIT_ANCESTOR, uri);
+			this.set(this.Params.UNIT_ANCESTOR, uri);
 		}
 
 		this.setNoDates = function() {
-			set(Fields.WITHOUT_DATES, '-');
+			this.set(this.Params.WITHOUT_DATES, '-');
 		}
 
 		this.setDates = function(before, after) {
-			if(before) set(Fields.START_BEFORE, before);
-			if(after)  set(Fields.START_AFTER, after);
+			if(before) this.set(this.Params.START_BEFORE, before);
+			if(after)  this.set(this.Params.START_AFTER, after);
 		}
 
 		this.EligibilityIndex = {
@@ -265,23 +263,24 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 		}
 
 		this.setEligibility = function(eligibilities) {
+			var oxDataCall = this
 			var list = $.map(eligibilities, function(val, i) {
-					return EligibilityIndex[val] ? val : null;
+					return oxDataCall.EligibilityIndex[val] || null;
 				});
-			set(Fields.ELIGIBILITY_URIS, list);
+			this.set(this.Params.ELIGIBILITY_URIS, list);
 		}
 
 		this.setSkill = function(skill) {
-			if (skill) set(Fields.SUBJECT_URI, skill);
+			if (skill) this.set(this.Params.SUBJECT_URI, skill);
 		}
 
 		this.setResearchMethod = function(method) {
-			if (method) set(Fields.METHOD_URI, method);
+			if (method) this.set(this.Params.METHOD_URI, method);
 		}
 
 		this.perform = function(callback) {
 			$.ajaxSettings.traditional = true;
-			$.getJSON(url, params, callback);
+			$.getJSON(this.url, this.params, callback);
 		}
 
 	}
@@ -305,7 +304,7 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 		}
 
 		// public
-		this.availableColumnbs = function() {
+		this.availableColumns = function() {
 			return this.columns;
 		}
 
@@ -372,13 +371,13 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 	}
 
 	var Fields = {
-		START       : Column('start',       'Start date',  'course-presentation-start'),
-		TITLE       : Column('title',       'Title',       'course-title'),
-		SUBJECT     : Column('subject',     'Subject(s)',  'course-subject'),
-		VENUE       : Column('venue',       'Venue',       'course-presentation-venue'),
-		PROVIDER    : Column('provider',    'Provider',    'course-provider'),
-		DESCRIPTION : Column('description', 'Description', 'course-description'),
-		ELIGIBILITY : Column('eligibility', 'Eligibility', 'course-eligibility')
+		START       : new Column('start',       'Start date',  'course-presentation-start'),
+		TITLE       : new Column('title',       'Title',       'course-title'),
+		SUBJECT     : new Column('subject',     'Subject(s)',  'course-subject'),
+		VENUE       : new Column('venue',       'Venue',       'course-presentation-venue'),
+		PROVIDER    : new Column('provider',    'Provider',    'course-provider'),
+		DESCRIPTION : new Column('description', 'Description', 'course-description'),
+		ELIGIBILITY : new Column('eligibility', 'Eligibility', 'course-eligibility')
 	};
 
 	// handles the data that is returned from data.ox.ac.uk
@@ -386,11 +385,11 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 		this.presentations = results.hits.hits;
 
 		this.toRows = function(availableColumns) {
-			return $.map(presentations, function(presenatation, i) {
-				result = presenation._source;
+			return $.map(this.presentations, function(presentation, i) {
+				var result = presentation._source;
 
-				row = new Row(availableColumns);
-				row.setStart(result.start, this.momentLib);
+				var row = new Row(availableColumns);
+				row.setStart(result.start);
 				row.setTitle(result.label, result.applyTo, result.homepage);
 				row.setSubjects(result.subject);
 				row.setVenue(result.venue);
@@ -408,14 +407,22 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 		this.columns = availableColumns;
 
 		this.addCell = function(field, html) {
-			if ($.inArray(field, columns)) {
-				this.cells[name] = html;
+			var found = false;
+			for (var i in this.columns) {
+				if (this.columns[i] == field) {
+					found = true;
+				}
 			}
+
+			if (found) {
+				this.cells[field.name] = html;
+			}
+
 		}
 
 		this.toHtml = function() {
 			var tds = $.map(this.cells, function(html, i) {
-					$('<td/>').append(html);
+					return $('<td/>').append(html)[0].outerHTML;
 				});
 			return $('<tr/>').append(tds.join(''));
 		};
@@ -430,7 +437,7 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			title = label ? label.valueOf() : '-';
 
 			if (apply) {
-				this.addCell(Fields.TITLE, mixedContentSafeLink(label, applyTo.uri));
+				this.addCell(Fields.TITLE, mixedContentSafeLink(label, apply.uri));
 			} else if (homepage) {
 				this.addCell(Fields.TITLE, mixedContentSafeLink(label, homepage.uri));
 			} else {
@@ -519,11 +526,10 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			tabler.addRows(parser.toRows(availableColumns));
 
 			var ui = new WidgetUI(e);
-			ui.addTable(tabler.build);
+			ui.addTable(tabler.build());
 			// ui.addNoDatesLink();
 			ui.configureDataTables(availableColumns);
 			ui.hideLoadingMessage();
-
 		};
 
 		$('.courses-widget-container').each(function(i, e){ setUp(e);});
