@@ -109,7 +109,7 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			this.skill = skill ? "https://data.ox.ac.uk/id/ox-rdf/descriptor/" + skill : "";
 		}
 
-		this.setStartingFilters(before, after) {
+		this.setStartingFilters = function(before, after) {
 			if (before == undefined) {
 				if (after == undefined) {
 					after = "now"; // set default to courses in the future
@@ -162,7 +162,7 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			}
 
 			this.Fields = {
-				QUERY : 'q',
+				QUERY         : 'q',
 				UNIT_ANCESTOR : 'filter.offeredByAncestor',
 				WITHOUT_DATES : 'filter.start.time',
 				START_AFTER   : 'gte.start.time',
@@ -171,7 +171,7 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 				METHOD_URI    : 'filter.researchMethod.uri'
 			}
 
-			this.prepare(options) {
+			this.prepare = function(options) {
 				this.setQuery(options.includeContinuingEducation);
 				this.setUnits(options.units);
 
@@ -196,7 +196,7 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			}
 
 			this.setUnits = function(units) {
-				var uri = (units && units.length > 0) units ? : 'http://oxpoints.oucs.ox.ac.uk/id/00000000';
+				var uri = (units && units.length > 0) ? units : 'http://oxpoints.oucs.ox.ac.uk/id/00000000';
 				set(Fields.UNIT_ANCESTOR, uri);
 			}
 
@@ -267,11 +267,11 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			}
 
 			this.build = function() {
-				var table = $('<table/>', {'class', 'course-results-table'});
+				var table = $('<table/>', {'class': 'course-results-table'});
 
 				var head = $('<thead/>');
 				for (var i in this.columns) {
-					head.append(this.columns[i].toHtml();)
+					head.append(this.columns[i].toHtml());
 				}
 				table.append(head);
 
