@@ -147,6 +147,50 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			this.addTitle = function(title) {
 				$('<h2/>', {'class': 'courses-widget-title', 'text': title}).appendTo($e);
 			}
+
+			this.addNoDatesLink = function() {
+				var linkTitle = (options.withoutDates)? "Show courses with specific dates" : "Show courses without specific dates";
+				var $noDatesToggle = $('<a class="courses-widget-no-date-toggle-link" href="#">' + linkTitle + '</a>').click(function () {
+					options.withoutDates = (options.withoutDates)? false : true;
+					$(e).children('.course-results-table').remove();
+					$(e).children('.dataTables_wrapper').remove();
+					$(this).remove(); 
+					getData(e, options);
+
+					return false;
+				});
+
+				$(e).append($noDatesToggle);
+			}
+
+			this.addTable = function(tableHtml) {
+				$e.append(tableHtml);
+			}
+
+			this.configureDataTables = function(availableColumns) {
+
+				var dataTablesColumnsConfig = new Array();
+				var columnCount = 0;
+
+				for (var column in availableColumns) {
+					switch (column.name) {
+						case 'start':
+							dataTablesColumnsConfig.push({ "sWidth": '8.1em', "aTargets":[columnCount], 'sType':'date'});
+							break;
+						default: break;
+					}
+					columnCount++;
+				}
+
+				dataTable = $e.children(".course-results-table").dataTable( {
+					aoColumnDefs: dataTablesColumnsConfig,
+					"iDisplayLength": 25,
+					"oLanguage": {
+						"sEmptyTable" : "No matching courses found.",
+					},
+				} );
+
+			}
 		}
 
 		// prepares the call to data.ox.ac.uk
@@ -456,12 +500,6 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			ui.addTitle(options.title);
 			ui.addLoadingMessage();
 
-			getData(e, options);
-		};
-
-		// constructs the query from options and sends it
-		var getData = function(e, options) {
-
 			call = new OxDataCall();
 			call.prepare(options);
 			callback = function(json) { handleData(e, options, json); };
@@ -479,42 +517,9 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
 			tabler.addRows(parser.toRows(availableColumns));
 
-			/*
-			 * Disable the courses without dates link whilst the functionality is still being improved
-			 *
-
-			var linkTitle = (options.withoutDates)? "Show courses with specific dates" : "Show courses without specific dates";
-			var $noDatesToggle = $('<a class="courses-widget-no-date-toggle-link" href="#">' + linkTitle + '</a>').click(function () {
-				options.withoutDates = (options.withoutDates)? false : true;
-				$(e).children('.course-results-table').remove();
-				$(e).children('.dataTables_wrapper').remove();
-				$(this).remove(); 
-				getData(e, options);
-				return false;
-			});
-
-			$(e).append($noDatesToggle);
-
-			*/
-
-			var dataTablesColumnsConfig = new Array();
-			var columnCount = 0;
-			for (var column in columnsToDisplay) {
-				switch (column) {
-					case 'start':
-						dataTablesColumnsConfig.push({ "sWidth": '8.1em', "aTargets":[columnCount], 'sType':'date'});
-						break;
-					default: break;
-				}
-				columnCount++;
-			}
-			dataTable = $(e).children(".course-results-table").dataTable( {
-				aoColumnDefs: dataTablesColumnsConfig,
-        "iDisplayLength": 25,
-				"oLanguage": {
-						"sEmptyTable" : "No matching courses found.",
-					},
-			} );
+			ui.addTable(tabler.build);
+			// ui.addNoDatesLink();
+			ui.configureDataTables(availableColumns);
 
 			$(e).children(".courses-widget-wait").hide();
 
