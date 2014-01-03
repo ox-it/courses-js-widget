@@ -136,10 +136,12 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 					.append(loadingImage())
 				  .appendTo($e);
 
-				// I don't think this is necessary any more
-				// $e.children(".courses-widget-wait").show();
+				$e.children(".courses-widget-wait").show();
 			}
 
+			this.hideLoadingMessage = function() {
+				$e.children(".courses-widget-wait").hide();
+			}
 			this.loadingImage = function() {
 				return $('<img/>', {'src': 'https://static.data.ox.ac.uk/loader.gif', 'alt': 'Please wait'})
 			}
@@ -517,10 +519,10 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
 			tabler.addRows(parser.toRows(availableColumns));
 
+			var ui = new WidgetUI(e);
 			ui.addTable(tabler.build);
 			// ui.addNoDatesLink();
 			ui.configureDataTables(availableColumns);
-
 			$(e).children(".courses-widget-wait").hide();
 
 		};
