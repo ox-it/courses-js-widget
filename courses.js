@@ -237,11 +237,6 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
 		}
 
-		// handles the data that is returned from data.ox.ac.uk
-		function ResponseParser() {
-		}
-
-
 		// responsible for putting the results table together
 		//   @param chosenColumns the columns that were specified in the div on initialisation
 		//   @param showDates boolean flag indicating whether dates should be shown
@@ -335,6 +330,29 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			ELIGIBILITY : Column('eligibility', 'Eligibility', 'course-eligibility')
 		};
 
+		// handles the data that is returned from data.ox.ac.uk
+		function ResponseParser(results) {
+			this.presentations = results.hits.hits;
+			// for date parsing
+			this.momentLib = require('moment');
+
+			this.toRows = function(availableColumns) {
+				return $.map(presentations, function(presenatation, i) {
+					result = presenation._source;
+
+					row = new Row(availableColumns);
+					row.setStart(result.start);
+					row.setTitle(result.label, result.applyTo, result.homepage);
+					row.setSubjects(result.subject);
+					row.setVenue(result.venue);
+					row.setDescription(result.description);
+					row.setEligibility(result.eligibility);
+
+					return row;
+				});
+			}
+		}
+
 		function Row(availableColumns) {
 			this.cells = {}
 			this.columns = availableColumns;
@@ -352,7 +370,6 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 				return $('<tr/>').append(tds.join(''));
 			};
 		}
-
 	}
 
 /* Our main function 
