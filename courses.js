@@ -341,10 +341,11 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 					result = presenation._source;
 
 					row = new Row(availableColumns);
-					row.setStart(result.start);
+					row.setStart(result.start, this.momentLib);
 					row.setTitle(result.label, result.applyTo, result.homepage);
 					row.setSubjects(result.subject);
 					row.setVenue(result.venue);
+					row.setProvider(result.offeredBy);
 					row.setDescription(result.description);
 					row.setEligibility(result.eligibility);
 
@@ -357,8 +358,8 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			this.cells = {}
 			this.columns = availableColumns;
 
-			this.addCell = function(name, html) {
-				if ($.inArray(name, columns)) {
+			this.addCell = function(field, html) {
+				if ($.inArray(field, columns)) {
 					this.cells[name] = html;
 				}
 			}
@@ -369,6 +370,71 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 					});
 				return $('<tr/>').append(tds.join(''));
 			};
+
+			this.setStart = function(start, momentLib) {
+				if(start) {
+					// Mon 1 Oct 2012
+					this.addCell(Fields.START, momentLib(start.time).format("ddd D MMM YYYY"));
+				}
+			}
+
+			this.setTitle = function(label, apply, homepage) {
+				title = label ? label.valueOf() : '-';
+
+				if (apply) {
+					this.addCell(Fields.TITLE, mixedContentSafeLink(label, applyTo.uri));
+				} else if (homepage) {
+					this.addCell(Fields.TITLE, mixedContentSafeLink(label, homepage.uri));
+				} else {
+					this.addCell(Fields.TITLE, $('<span/>', {'title': label, 'text': label}));
+				}
+			}
+
+			this.setSubjects = function(subjects) {
+				if (subjects) {
+					var notJACS = new Array();
+					for (j in subjects) {
+						if (!this.isJacsCode(subjects[j].uri)) {
+							notJACS.push(subjects[j].label);
+						}
+					}
+					this.addCell(Fields.SUBJECT, $('<span>').text(notJACS.join(', ')));
+				}
+			}
+
+			this.isJacsCode = function(code) {
+				return code.indexOf('http://jacs.dataincubator.org/') == 0;
+			}
+
+			this.setVenue = function(venue) {
+				if (venue) {
+					var label = venue.label || '-';
+					this.addCell(Fields.VENUE, label);
+				}
+			}
+
+			this.setProvider = function(provider) {
+				if (provider) {
+					var label = provider.label || '-';
+					this.addCell(Fields.PROVIDER, label);
+				}
+			}
+
+			this.setDescription = function(description) {
+				if (description) {
+					this.addCell(Fields.DESCRIPTION, description);
+				}
+			}
+
+			this.setEligibility = function(eligibility) {
+				if (eligibility) {
+					this.addCell(Fields.ELIGIBILITY, this.capitalise(eligibility));
+				}
+			}
+
+			this.capitalise = function(sentence) {
+				capitalised = sentence.label.charAt(0).toUpperCase() + sentence.label.slice(1)
+			}
 		}
 	}
 
