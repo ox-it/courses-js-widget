@@ -256,12 +256,14 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			}
 
 			// public
-			this.isColumnAvailable = function(name) {
-				return $.inArray(name, $.map(this.columns, function(c, i) {return c.name}));
+			this.availableColumnbs = function() {
+				return this.columns;
 			}
 
-			this.addRow = function(row) {
-				this.rows.push(row);
+			this.addRows = function(rows) {
+				for (var i in rows) {
+					this.rows.push(rows[i]);
+				}
 			}
 
 			this.build = function() {
@@ -470,82 +472,12 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 		// handles the query results 
 		var handleData = function(e, options, results) {
 
-			var tabler = new TableBuilder(options.displayColumns, !options.withoutDates);
+			var parser  = new ResponseParser(results);
+			var tabler  = new TableBuilder(options.displayColumns, !options.withoutDates);
 
-			var moment = require('moment');
+			var availableColumns = tabler.availableColumns();
 
-			presentations = results.hits.hits;
-
-			for (var i=0, max=presentations.length; i<max; i++) {
-
-				var presentation = presentations[i]._source;
-
-				var cells = {};
-
-				var start = presentation.start;
-				if (start && columnsToDisplay.start) {
-					time = moment(start.time);
-					cells.start = time.format("ddd D MMM YYYY"); // Mon 1 Oct 2012
-				}
-
-				var title    = presentation.label
-				var applyTo  = presentation.applyTo;
-				var homepage = presentation.homepage;
-
-				if (title && columnsToDisplay.title) {
-					title = title ? title.valueOf() : '—';
-					if (applyTo)
-						cells.title = mixedContentSafeLink(title, applyTo.uri);
-					else if (homepage)
-						cells.title = mixedContentSafeLink(title, homepage.uri);
-					else
-						cells.title = $('<span>', {title: title}).text(title);
-				}
-
-				var subjects = presentation.subject;
-				if (subjects && columnsToDisplay.subject) {
-
-					var notJACS = new Array();
-					for (j in subjects) {
-						if (subjects[j].uri.indexOf('http://jacs.dataincubator.org/') !== 0) { // Ignore JACS codes
-							notJACS.push(subjects[j].label);
-						}
-					}
-
-					cells.subject = $('<span>').text(notJACS.join(', '));
-				}
-
-				var venue = presentation.venue;
-				if (venue && 'venue' in columnsToDisplay) {
-					cells.venue = $('<span>').text(venue.label ? venue.label : '-');
-				}
-
-				if ('provider' in columnsToDisplay) {
-					var provider = presentation.offeredBy.label
-					cells.provider = provider ? provider : '-';
-				}
-
-				var description = presentation.description;
-				if (description && 'description' in columnsToDisplay) {
-					cells.description = $('<span>').text(description);
-				}
-
-				var eligibility = presentation.eligibility;
-				if (eligibility && 'eligibility' in columnsToDisplay) {
-					capitalised = eligibility.label.charAt(0).toUpperCase() + eligibility.label.slice(1)
-					cells.eligibility = $('<span>').text(capitalised);
-				}
-
-				var row = $("<tr>");
-
-				for(var column in columnsToDisplay) {
-					row.append($('<td>').append(cells[column]));
-				}
-
-				tbody.append(row);
-			}
-
-			var tableFoot = '</tbody></table>';
+			tabler.addRows(parser.toRows(availableColumns));
 
 			/*
 			 * Disable the courses without dates link whilst the functionality is still being improved
@@ -564,8 +496,6 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			$(e).append($noDatesToggle);
 
 			*/
-
-			$(e).append(table);
 
 			var dataTablesColumnsConfig = new Array();
 			var columnCount = 0;
