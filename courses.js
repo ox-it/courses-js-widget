@@ -253,10 +253,6 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 					'eligibility' : headerCell('Eligibility', 'course-eligibility')
 			};
 
-			this.headerCell = function(text, class) {
-				return $('<th/>', {'text': text, 'class': class});
-			}
-
 			this.columnsToDisplay = function(chosenColumns, showDates) {
 
 				if (chosenColumns && chosenColumns.size > 0) {
@@ -286,6 +282,15 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
 		}
 
+		function Column(name, text, classname) {
+			this.name       = name
+			this.classname  = classname
+			this.text       = text
+
+			this.toHtml = function() {
+				return $('<th/>', {'text': text, 'class': classname});
+			}
+		}
 		function Row(availableColumns) {
 			this.cells = {}
 			this.columns = availableColumns;
