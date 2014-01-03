@@ -16,6 +16,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
+	var moment = require('moment');
+
 	function paddedValue(v) {
 		if (v < 10 ) {
 			v = "0"+v;
@@ -382,8 +384,6 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 	// handles the data that is returned from data.ox.ac.uk
 	function ResponseParser(results) {
 		this.presentations = results.hits.hits;
-		// for date parsing
-		this.momentLib = require('moment');
 
 		this.toRows = function(availableColumns) {
 			return $.map(presentations, function(presenatation, i) {
@@ -420,10 +420,9 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			return $('<tr/>').append(tds.join(''));
 		};
 
-		this.setStart = function(start, momentLib) {
+		this.setStart = function(start) {
 			if(start) {
-				// Mon 1 Oct 2012
-				this.addCell(Fields.START, momentLib(start.time).format("ddd D MMM YYYY"));
+				this.addCell(Fields.START, moment(start.time).format("ddd D MMM YYYY")); // Mon 1 Oct 2012
 			}
 		}
 
