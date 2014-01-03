@@ -119,8 +119,8 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			}
 
 			// set to either now(), the current time, or failing these an empty string
-			this.startingAfter  = readNowAsCurrentTime(after || "");
 			this.startingBefore = readNowAsCurrentTime(before || "");
+			this.startingAfter  = readNowAsCurrentTime(after || "");
 		}
 
 		// helper function for setting dates
@@ -151,6 +151,161 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			}
 		}
 
+		// prepares the call to data.ox.ac.uk
+		function OxDataCall() {
+
+			this.url = 'https://data.ox.ac.uk/search/?callback=?';
+
+			this.params = {
+				'format'    : 'js',
+				'type'      : 'presentation',
+				'q'         : '*',
+				'page_size' : 10000,
+			}
+
+			this.Fields = {
+				QUERY : 'q',
+				UNIT_ANCESTOR : 'filter.offeredByAncestor',
+				WITHOUT_DATES : 'filter.start.time',
+				START_AFTER   : 'gte.start.time',
+				START_BEFORE  : 'lt.start.time',
+				SUBJECT_URI   : 'subject.uri',
+				METHOD_URI    : 'filter.researchMethod.uri'
+			}
+
+			this.prepare(options) {
+				this.setQuery(options.includeContinuingEducation);
+				this.setUnits(options.units);
+
+				if(options.withoutDates) {
+					this.setNoDates();
+				} else {
+					this.setDates(options.startingBefore, options.startingAfter);
+				}
+
+				this.setEligibility(options.eligibilities);
+				this.setSkill(options.skill);
+				this.setResearchMethod(options.researchMethod);
+
+			}
+
+			this.set = function(name, value) {
+				this.params[name] = value;
+			}
+
+			this.setQuery = function(includeCE) {
+				set(Fields.QUERY, includeCE ? '*' : '* NOT offeredBy.label:"Department of Continuing Education"');
+			}
+
+			this.setUnits = function(units) {
+				var uri = (units && units.length > 0) units ? : 'http://oxpoints.oucs.ox.ac.uk/id/00000000';
+				set(Fields.UNIT_ANCESTOR, uri);
+			}
+
+			this.setNoDates = function() {
+				set(Fields.WITHOUT_DATES, '-');
+			}
+
+			this.setDates = function(before, after) {
+				if(before) set(Fields.START_BEFORE, before);
+				if(after)  set(Fields.START_AFTER, after);
+			}
+
+			this.EligibilityIndex = {
+				'SU': 'oxcap:eligibility-public',
+				'OX': 'oxcap:eligibility-members',
+				'ST': 'oxcap:eligibility-staff'
+			}
+
+			this.setEligibility = function(eligibilities) {
+				var list = $.map(eligibilities, function(val, i) {
+						return EligibilityIndex[val] ? val : null;
+					});
+				set(Fields.ELIGIBILITY_URIS, list);
+			}
+
+			this.setSkill = function(skill) {
+				if (skill) set(Fields.SUBJECT_URI, skill);
+			}
+
+			this.setResearchMethod = function(method) {
+				if (method) set(Fields.METHOD_URI, method);
+			}
+
+			this.perform = function(callback) {
+				$.ajaxSettings.traditional = true;
+				$.getJSON(url, params, callback);
+			}
+
+		}
+
+		// handles the data that is returned from data.ox.ac.uk
+		function ResponseParser() {
+		}
+
+		function TableBuilder() {
+
+			this.Columns = { 
+					'start'       : headerCell('Start date',  'course-presentation-start'),
+					'title'       : headerCell('Title',       'course-title'),
+					'subject'     : headerCell('Subject(s)',  'course-subject'),
+					'venue'       : headerCell('Venue',       'course-presentation-venue'),
+					'provider'    : headerCell('Provider',    'course-provider'),
+					'description' : headerCell('Description', 'course-description'),
+					'eligibility' : headerCell('Eligibility', 'course-eligibility')
+			};
+
+			this.headerCell = function(text, class) {
+				return $('<th/>', {'text': text, 'class': class});
+			}
+
+			this.columnsToDisplay = function(chosenColumns, showDates) {
+
+				if (chosenColumns && chosenColumns.size > 0) {
+					return convertToObject( chosenColumns, function(x) { return showDates || x != 'start' } );
+				} else {
+					return this.Columns;
+				}
+			}
+
+			this.convertToObject = function(list, filter) {
+				newList = {};
+				for(var i in list) {
+					if (filter(list[i])) {
+						newList[list[i]] = true;
+					}
+				}
+			}
+
+			this.rows = [];
+
+			this.addRow = function(row) {
+				this.rows.push(row.toHtml);
+			}
+
+			this.build = function() {
+			}
+
+		}
+
+		function Row(availableColumns) {
+			this.cells = {}
+			this.columns = availableColumns;
+
+			this.addCell = function(name, html) {
+				if ($.inArray(name, columns)) {
+					this.cells[name] = html;
+				}
+			}
+
+			this.toHtml = function() {
+				var tds = $.map(this.cells, function(html, i) {
+						$('<td/>').append(html);
+					});
+				return $('<tr/>').append(tds.join(''));
+			};
+		}
+
 	}
 
 /* Our main function 
@@ -160,8 +315,6 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 		add_css("//static.data.ox.ac.uk/lib/DataTables/media/css/jquery.dataTables.css");
 		add_css("//static.data.ox.ac.uk/courses-js-widget/courses.css");
 
-		// creates an options object with parameters from the containing div attributes
-		// and then passes the element and the options on to getData
 		var setUp = function(e) {
 
 			var reader  = new ParametersReader(new Options(), e);
@@ -177,109 +330,20 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 		// constructs the query from options and sends it
 		var getData = function(e, options) {
 
-			var params = {
-				'format'    : 'js',
-				'type'      : 'presentation',
-				'q'         : '*',
-				'page_size' : 10000,
-			}
-
-			if (!options.includeContinuingEducation) {
-				params.q = '* NOT offeredBy.label:"Department of Continuing Education"';
-			}
-
-			if (options.units && options.units.length > 0) {
-				params['filter.offeredByAncestor.uri'] = options.units
-			} else {
-				params['filter.offeredByAncestor.uri'] = 'http://oxpoints.oucs.ox.ac.uk/id/00000000';
-			}
-
-			if(options.withoutDates) {
-				params['filter.start.time'] = '-';
-			} else {
-
-				if(options.startingAfter) {
-					params['gte.start.time'] = options.startingAfter
-				}
-
-				if(options.startingBefore) {
-					params['lt.start.time'] = options.startingBefore
-				}
-			}
-
-			if(options.eligibilities && options.eligibilities.length > 0) {
-				params['filter.eligibility.uri'] = []
-				for(i in options.eligibilities) {
-					eligibility = options.eligibilities[i]
-					switch(eligibility) {
-						case 'PU':
-							params['filter.eligibility.uri'].push('oxcap:eligibility-public')
-							break;
-						case 'OX':
-							params['filter.eligibility.uri'].push('oxcap:eligibility-members')
-							break;
-						case 'ST':
-							params['filter.eligibility.uri'].push('oxcap:eligibility-staff')
-							break;
-						default:
-					}
-				}
-			}
-
-			if(options.skill) {
-			  params['subject.uri'] = options.skill;
-			}
-
-			if(options.researchMethod) {
-			  params['filter.researchMethod.uri'] = options.researchMethod;
-			}
-
-			$.ajaxSettings.traditional = true;
-			$.getJSON('https://data.ox.ac.uk/search/?callback=?', params, function(json) { handleData(e, options, json) } );
+			call = new OxDataCall();
+			call.prepare(options);
+			callback = function(json) { handleData(e, options, json); };
+			call.perform(callback);
 
 		};
 
 		// handles the query results 
 		var handleData = function(e, options, results) {
 
-			// TODO Are these results safe to output as html?
-
-			var columnsAvailable = { 
-					'start': '<th class="course-presentation-start">Start date</th>',
-					'title': '<th class="course-title">Title</th>',
-					'subject': '<th class="course-subject">Subject(s)</th>',
-					'venue': '<th class="course-presentation-venue">Venue</th>',
-					'provider': '<th class="course-provider">Provider</th>',
-					'description': '<th class="course-description">Description</th>',
-					'eligibility': '<th class="course-eligibility">Eligibility</th>',
-			};
+			var builder = new TableBuilder();
+			var columnsToDisplay = builder.prepareColumns(options.displayColumns, !options.withoutDates);
 
 			var tableHeaderCells = "";
-			var columnsToDisplay = {};
-
-			if (options.displayColumns !== "") {
-
-				options.displayColumns = options.displayColumns.replace(/^\s+|\s+$/g, '') // trim whitespace and split by spaces
-				var columns = options.displayColumns.split(' ');
-
-				var columnsToDisplay = {}; // now to convert into an object
-				for (i in columns) {
-					if (columns[i] == 'start' && options.withoutDates) {
-
-						// do nothing
-
-					} else {
-
-						columnsToDisplay[columns[i]] = true;
-
-					}
-				}
-
-			} else {
-				// if no columns specified, default to all available
-				columnsToDisplay = columnsAvailable;
-			}
-
 			for (var i in columnsToDisplay) {
 				tableHeaderCells += columnsAvailable[i];
 			}
