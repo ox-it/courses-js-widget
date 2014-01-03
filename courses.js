@@ -140,11 +140,11 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 				// $e.children(".courses-widget-wait").show();
 			}
 
-			this.loadingImage = function () {
+			this.loadingImage = function() {
 				return $('<img/>', {'src': 'https://static.data.ox.ac.uk/loader.gif', 'alt': 'Please wait'})
 			}
 
-			this.appendTitle = function(title) {
+			this.addTitle = function(title) {
 				$('<h2/>', {'class': 'courses-widget-title', 'text': title}).appendTo($e);
 			}
 		}
@@ -453,8 +453,8 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			var options = reader.read();
 
 			var ui = new WidgetUI(e);
-			ui.appendTitle(options.title);
-			ui.appendLoadingMessage();
+			ui.addTitle(options.title);
+			ui.addLoadingMessage();
 
 			getData(e, options);
 		};
