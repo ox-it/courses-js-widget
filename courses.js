@@ -387,18 +387,7 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 		// handles the query results 
 		var handleData = function(e, options, results) {
 
-			var builder = new TableBuilder();
-			var columnsToDisplay = builder.prepareColumns(options.displayColumns, !options.withoutDates);
-
-			var tableHeaderCells = "";
-			for (var i in columnsToDisplay) {
-				tableHeaderCells += columnsAvailable[i];
-			}
-			
-			var tbody = $('<tbody>');
-			var table = $('<table>', {"class": 'course-results-table'})
-				.append($('<thead>').append($('<tr>').html(tableHeaderCells)))
-				.append(tbody);
+			var tabler = new TableBuilder(options.displayColumns, !options.withoutDates);
 
 			var moment = require('moment');
 
