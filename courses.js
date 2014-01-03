@@ -241,35 +241,78 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 		function ResponseParser() {
 		}
 
-		function TableBuilder() {
 
-			this.columnsToDisplay = function(chosenColumns, showDates) {
-
-				if (chosenColumns && chosenColumns.size > 0) {
-					return convertToObject( chosenColumns, function(x) { return showDates || x != 'start' } );
-				} else {
-					return this.Columns;
-				}
-			}
-
-			this.convertToObject = function(list, filter) {
-				newList = {};
-				for(var i in list) {
-					if (filter(list[i])) {
-						newList[list[i]] = true;
-					}
-				}
-			}
+		// responsible for putting the results table together
+		//   @param chosenColumns the columns that were specified in the div on initialisation
+		//   @param showDates boolean flag indicating whether dates should be shown
+		function TableBuilder(chosenColumns, showDates) {
 
 			this.rows = [];
+			this.columns = [];
+
+			// let's initialise these columns based on the what was chosen in the options
+			if (chosenColumns && chosenColumns.size > 0) {
+				var availableColumns = this.filter(AvailableColumns, function(x) {
+						return this.isAChosenColumn(x, chosenColumns) && this.canDisplaycolumn(x, showDates);
+					});
+				this.columns = this.convertToObject(availableColumns);
+			} else {
+				this.columns = AvailableColumns;
+			}
+
+			// public
+			this.isColumnAvailable = function(name) {
+				return $.inArray(name, $.map(this.columns, function(c, i) {return c.name}));
+			}
 
 			this.addRow = function(row) {
-				this.rows.push(row.toHtml);
+				this.rows.push(row);
 			}
 
 			this.build = function() {
+				var table = $('<table/>', {'class', 'course-results-table'});
+
+				var head = $('<thead/>');
+				for (var i in this.columns) {
+					head.append(this.columns[i].toHtml();)
+				}
+				table.append(head);
+
+				var body = $('<tbody/>');
+				for (var i in this.rows) {
+					body.append(this.rows[i].toHtml());
+				}
+				table.append(body);
+
+				return table;
 			}
 
+			// private
+			this.isAChosenColumn = function(column, chosenColumns) {
+				return $.inArray(column.name, chosenColumns);
+			}
+
+			this.canDisplayColumn = function(column, showDates) {
+				return showDates || column.name != 'start';
+			}
+
+			this.filter = function(list, predicate) {
+				newList = [];
+				for(var i in list) {
+					if (predicate(list[i])) {
+						newList.push(list[i]);
+					}
+				}
+				return newList;
+			}
+
+			this.convertToObject = function(list) {
+				newList = {};
+				for(var i in list) {
+					newList[list[i]] = true;
+				}
+				return newList;
+			}
 		}
 
 		function Column(name, text, classname) {
