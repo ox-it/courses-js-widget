@@ -243,16 +243,6 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
 		function TableBuilder() {
 
-			this.Columns = { 
-					'start'       : headerCell('Start date',  'course-presentation-start'),
-					'title'       : headerCell('Title',       'course-title'),
-					'subject'     : headerCell('Subject(s)',  'course-subject'),
-					'venue'       : headerCell('Venue',       'course-presentation-venue'),
-					'provider'    : headerCell('Provider',    'course-provider'),
-					'description' : headerCell('Description', 'course-description'),
-					'eligibility' : headerCell('Eligibility', 'course-eligibility')
-			};
-
 			this.columnsToDisplay = function(chosenColumns, showDates) {
 
 				if (chosenColumns && chosenColumns.size > 0) {
@@ -291,6 +281,17 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 				return $('<th/>', {'text': text, 'class': classname});
 			}
 		}
+
+		var AvailableColumns = { 
+			START       : Column('start',       'Start date',  'course-presentation-start'),
+			TITLE       : Column('title',       'Title',       'course-title'),
+			SUBJECT     : Column('subject',     'Subject(s)',  'course-subject'),
+			VENUE       : Column('venue',       'Venue',       'course-presentation-venue'),
+			PROVIDER    : Column('provider',    'Provider',    'course-provider'),
+			DESCRIPTION : Column('description', 'Description', 'course-description'),
+			ELIGIBILITY : Column('eligibility', 'Eligibility', 'course-eligibility')
+		};
+
 		function Row(availableColumns) {
 			this.cells = {}
 			this.columns = availableColumns;
