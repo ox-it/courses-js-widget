@@ -85,8 +85,12 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			this.title = title || "Courses";
 		}
 
-		this.setDisplayColumns = function(displayColumns) {
-			this.displayColumns = displayColumns || "";
+		this.setDisplayColumns = function(columns) {
+			this.displayColumns = columns ? trimWhitespace(columns).split(' ') : [];
+		}
+
+		this.trimWhitespace = function(string) {
+			return string.replace(/^\s+|\s+$/g, '');
 		}
 
 		// assumes a space separated list
