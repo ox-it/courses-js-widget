@@ -247,12 +247,12 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
 			// let's initialise these columns based on the what was chosen in the options
 			if (chosenColumns && chosenColumns.size > 0) {
-				var availableColumns = this.filter(AvailableColumns, function(x) {
+				var availableColumns = this.filter(Fields, function(x) {
 						return this.isAChosenColumn(x, chosenColumns) && this.canDisplaycolumn(x, showDates);
 					});
 				this.columns = this.convertToObject(availableColumns);
 			} else {
-				this.columns = AvailableColumns;
+				this.columns = Fields;
 			}
 
 			// public
@@ -320,7 +320,7 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			}
 		}
 
-		var AvailableColumns = { 
+		var Fields = {
 			START       : Column('start',       'Start date',  'course-presentation-start'),
 			TITLE       : Column('title',       'Title',       'course-title'),
 			SUBJECT     : Column('subject',     'Subject(s)',  'course-subject'),
