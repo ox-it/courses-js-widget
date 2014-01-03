@@ -16,8 +16,6 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
-	var filterUndefined = function(t) { return t !== undefined; };
-
 	function paddedValue(v) {
 		if (v < 10 ) {
 			v = "0"+v;
@@ -354,9 +352,6 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 				.append(tbody);
 
 			var moment = require('moment');
-			//var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-			var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-			var weekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 			presentations = results.hits.hits;
 
