@@ -49,23 +49,23 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
 		this.options = options;
 		this.e = element;
-		this.$e = $(div);
+		this.$e = $(element);
 
 		this.fetch = function(param) {
-			return $e.attr(param)
+			return this.$e.attr(param)
 		}
 
 		this.read = function() {
-			options.setTitle(fetch("data-title"));
-			options.setDisplaycolumns(fetch("data-displayColumns"));
-			options.setUnits(fetch("data-providedBy"));
-			options.setEligibilities(fetch("data-eligibility"));
-			options.setResearchMethod(fetch("data-researchMethod"));
-			options.setSkill(fetch("data-skill"));
+			this.options.setTitle(this.fetch("data-title"));
+			this.options.setDisplayColumns(this.fetch("data-displayColumns"));
+			this.options.setUnits(this.fetch("data-providedBy"));
+			this.options.setEligibilities(this.fetch("data-eligibility"));
+			this.options.setResearchMethod(this.fetch("data-researchMethod"));
+			this.options.setSkill(this.fetch("data-skill"));
 
-			options.setStartingFilters(
-				fetch("data-startingBefore"),
-				fetch("data-startingAfter")
+			this.options.setStartingFilters(
+				this.fetch("data-startingBefore"),
+				this.fetch("data-startingAfter")
 			);
 
 			return options;
@@ -84,7 +84,7 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 		}
 
 		this.setDisplayColumns = function(columns) {
-			this.displayColumns = columns ? trimWhitespace(columns).split(' ') : [];
+			this.displayColumns = columns ? this.trimWhitespace(columns).split(' ') : [];
 		}
 
 		this.trimWhitespace = function(string) {
@@ -117,8 +117,8 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			}
 
 			// set to either now(), the current time, or failing these an empty string
-			this.startingBefore = readNowAsCurrentTime(before || "");
-			this.startingAfter  = readNowAsCurrentTime(after || "");
+			this.startingBefore = this.readNowAsCurrentTime(before || "");
+			this.startingAfter  = this.readNowAsCurrentTime(after || "");
 		}
 
 		// helper function for setting dates
@@ -523,7 +523,7 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			ui.addTable(tabler.build);
 			// ui.addNoDatesLink();
 			ui.configureDataTables(availableColumns);
-			$(e).children(".courses-widget-wait").hide();
+			ui.hideLoadingMessage();
 
 		};
 
