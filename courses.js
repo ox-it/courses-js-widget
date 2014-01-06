@@ -16,6 +16,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
+	var moment = require('moment');
+
 	function paddedValue(v) {
 		if (v < 10 ) {
 			v = "0"+v;
@@ -49,23 +51,23 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
 		this.options = options;
 		this.e = element;
-		this.$e = $(div);
+		this.$e = $(element);
 
 		this.fetch = function(param) {
-			return $e.attr(param)
+			return this.$e.attr(param)
 		}
 
 		this.read = function() {
-			options.setTitle(fetch("data-title"));
-			options.setDisplaycolumns(fetch("data-displayColumns"));
-			options.setUnits(fetch("data-providedBy"));
-			options.setEligibilities(fetch("data-eligibility"));
-			options.setResearchMethod(fetch("data-researchMethod"));
-			options.setSkill(fetch("data-skill"));
+			this.options.setTitle(this.fetch("data-title"));
+			this.options.setDisplayColumns(this.fetch("data-displayColumns"));
+			this.options.setUnits(this.fetch("data-providedBy"));
+			this.options.setEligibilities(this.fetch("data-eligibility"));
+			this.options.setResearchMethod(this.fetch("data-researchMethod"));
+			this.options.setSkill(this.fetch("data-skill"));
 
-			options.setStartingFilters(
-				fetch("data-startingBefore"),
-				fetch("data-startingAfter")
+			this.options.setStartingFilters(
+				this.fetch("data-startingBefore"),
+				this.fetch("data-startingAfter")
 			);
 
 			return options;
@@ -84,7 +86,7 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 		}
 
 		this.setDisplayColumns = function(columns) {
-			this.displayColumns = columns ? trimWhitespace(columns).split(' ') : [];
+			this.displayColumns = columns ? this.trimWhitespace(columns).split(' ') : [];
 		}
 
 		this.trimWhitespace = function(string) {
@@ -117,326 +119,373 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			}
 
 			// set to either now(), the current time, or failing these an empty string
-			this.startingBefore = readNowAsCurrentTime(before || "");
-			this.startingAfter  = readNowAsCurrentTime(after || "");
+			this.startingBefore = this.readNowAsCurrentTime(before || "");
+			this.startingAfter  = this.readNowAsCurrentTime(after || "");
 		}
 
 		// helper function for setting dates
 		this.readNowAsCurrentTime = function(param) {
 			return param == "now" ? now() : param;
 		}
+	}
 
-		// controls the interface of the widget
-		function WidgetUI(element) {
-			this.e  = element;
-			this.$e = $(element);
+	// controls the interface of the widget
+	function WidgetUI(element) {
+		this.e  = element;
+		this.$e = $(element);
 
-			this.appendLoadingMessage = function() {
-				$('<div/>', {'class': 'courses-widget-wait', 'text': 'Loading courses...'})
-					.append(loadingImage())
-				  .appendTo($e);
+		this.addLoadingMessage = function() {
+			$('<div/>', {'class': 'courses-widget-wait', 'text': 'Loading courses...'})
+				.append(this.loadingImage())
+			  .appendTo(this.$e);
 
-				// I don't think this is necessary any more
-				// $e.children(".courses-widget-wait").show();
-			}
-
-			this.loadingImage = function () {
-				return $('<img/>', {'src': 'https://static.data.ox.ac.uk/loader.gif', 'alt': 'Please wait'})
-			}
-
-			this.appendTitle = function(title) {
-				$('<h2/>', {'class': 'courses-widget-title', 'text': title}).appendTo($e);
-			}
+			this.$e.children(".courses-widget-wait").show();
 		}
 
-		// prepares the call to data.ox.ac.uk
-		function OxDataCall() {
+		this.hideLoadingMessage = function() {
+			this.$e.children(".courses-widget-wait").hide();
+		}
+		this.loadingImage = function() {
+			return $('<img/>', {'src': 'https://static.data.ox.ac.uk/loader.gif', 'alt': 'Please wait'})
+		}
 
-			this.url = 'https://data.ox.ac.uk/search/?callback=?';
+		this.addTitle = function(title) {
+			$('<h2/>', {'class': 'courses-widget-title', 'text': title}).appendTo(this.$e);
+		}
 
-			this.params = {
-				'format'    : 'js',
-				'type'      : 'presentation',
-				'q'         : '*',
-				'page_size' : 10000,
-			}
+		this.addNoDatesLink = function() {
+			var linkTitle = (options.withoutDates)? "Show courses with specific dates" : "Show courses without specific dates";
+			var $noDatesToggle = $('<a class="courses-widget-no-date-toggle-link" href="#">' + linkTitle + '</a>').click(function () {
+				options.withoutDates = (options.withoutDates)? false : true;
+				$(e).children('.course-results-table').remove();
+				$(e).children('.dataTables_wrapper').remove();
+				$(this).remove(); 
+				getData(e, options);
 
-			this.Fields = {
-				QUERY         : 'q',
-				UNIT_ANCESTOR : 'filter.offeredByAncestor',
-				WITHOUT_DATES : 'filter.start.time',
-				START_AFTER   : 'gte.start.time',
-				START_BEFORE  : 'lt.start.time',
-				SUBJECT_URI   : 'subject.uri',
-				METHOD_URI    : 'filter.researchMethod.uri'
-			}
+				return false;
+			});
 
-			this.prepare = function(options) {
-				this.setQuery(options.includeContinuingEducation);
-				this.setUnits(options.units);
+			$(e).append($noDatesToggle);
+		}
 
-				if(options.withoutDates) {
-					this.setNoDates();
-				} else {
-					this.setDates(options.startingBefore, options.startingAfter);
+		this.addTable = function(tableHtml) {
+			this.$e.append(tableHtml);
+		}
+
+		this.configureDataTables = function(availableColumns) {
+
+			var config = new Array();
+			var i = 0;
+
+			for (var c in availableColumns) {
+				if (c == 'START') {
+					config.push({ "sWidth": '8.1em', "aTargets":[i], 'sType':'date'});
 				}
-
-				this.setEligibility(options.eligibilities);
-				this.setSkill(options.skill);
-				this.setResearchMethod(options.researchMethod);
-
+				i++;
 			}
 
-			this.set = function(name, value) {
-				this.params[name] = value;
+			dataTable = this.$e.children(".course-results-table").dataTable({
+				aoColumnDefs: config,
+				"iDisplayLength": 25,
+				"oLanguage": {
+					"sEmptyTable" : "No matching courses found.",
+				},
+			});
+
+		}
+	}
+
+	// prepares the call to data.ox.ac.uk
+	function OxDataCall() {
+
+		this.url = 'https://data.ox.ac.uk/search/?callback=?';
+
+		this.params = {
+			'format'    : 'js',
+			'type'      : 'presentation',
+			'q'         : '*',
+			'page_size' : 10000,
+		}
+
+		this.Params = {
+			QUERY            : 'q',
+			UNIT_ANCESTOR    : 'filter.offeredByAncestor.uri',
+			WITHOUT_DATES    : 'filter.start.time',
+			START_AFTER      : 'gte.start.time',
+			START_BEFORE     : 'lt.start.time',
+			SUBJECT_URI      : 'subject.uri',
+			METHOD_URI       : 'filter.researchMethod.uri',
+			ELIGIBILITY_URIS : 'filter.eligibility.uri'
+		}
+
+		this.prepare = function(options) {
+			this.setQuery(options.includeContinuingEducation);
+			this.setUnits(options.units);
+
+			if(options.withoutDates) {
+				this.setNoDates();
+			} else {
+				this.setDates(options.startingBefore, options.startingAfter);
 			}
 
-			this.setQuery = function(includeCE) {
-				set(Fields.QUERY, includeCE ? '*' : '* NOT offeredBy.label:"Department of Continuing Education"');
-			}
-
-			this.setUnits = function(units) {
-				var uri = (units && units.length > 0) ? units : 'http://oxpoints.oucs.ox.ac.uk/id/00000000';
-				set(Fields.UNIT_ANCESTOR, uri);
-			}
-
-			this.setNoDates = function() {
-				set(Fields.WITHOUT_DATES, '-');
-			}
-
-			this.setDates = function(before, after) {
-				if(before) set(Fields.START_BEFORE, before);
-				if(after)  set(Fields.START_AFTER, after);
-			}
-
-			this.EligibilityIndex = {
-				'SU': 'oxcap:eligibility-public',
-				'OX': 'oxcap:eligibility-members',
-				'ST': 'oxcap:eligibility-staff'
-			}
-
-			this.setEligibility = function(eligibilities) {
-				var list = $.map(eligibilities, function(val, i) {
-						return EligibilityIndex[val] ? val : null;
-					});
-				set(Fields.ELIGIBILITY_URIS, list);
-			}
-
-			this.setSkill = function(skill) {
-				if (skill) set(Fields.SUBJECT_URI, skill);
-			}
-
-			this.setResearchMethod = function(method) {
-				if (method) set(Fields.METHOD_URI, method);
-			}
-
-			this.perform = function(callback) {
-				$.ajaxSettings.traditional = true;
-				$.getJSON(url, params, callback);
-			}
+			this.setEligibility(options.eligibilities);
+			this.setSkill(options.skill);
+			this.setResearchMethod(options.researchMethod);
 
 		}
 
-		// responsible for putting the results table together
-		//   @param chosenColumns the columns that were specified in the div on initialisation
-		//   @param showDates boolean flag indicating whether dates should be shown
-		function TableBuilder(chosenColumns, showDates) {
+		this.set = function(name, value) {
+			this.params[name] = value;
+		}
 
-			this.rows = [];
-			this.columns = [];
+		this.setQuery = function(includeCE) {
+			this.set(this.Params.QUERY, includeCE ? '*' : '* NOT offeredBy.label:"Department of Continuing Education"');
+		}
 
+		this.setUnits = function(units) {
+			var uri = (units && units.length > 0) ? units : 'http://oxpoints.oucs.ox.ac.uk/id/00000000';
+			this.set(this.Params.UNIT_ANCESTOR, uri);
+		}
+
+		this.setNoDates = function() {
+			this.set(this.Params.WITHOUT_DATES, '-');
+		}
+
+		this.setDates = function(before, after) {
+			if(before) this.set(this.Params.START_BEFORE, before);
+			if(after)  this.set(this.Params.START_AFTER, after);
+		}
+
+		this.EligibilityIndex = {
+			'SU': 'oxcap:eligibility-public',
+			'OX': 'oxcap:eligibility-members',
+			'ST': 'oxcap:eligibility-staff'
+		}
+
+		this.setEligibility = function(eligibilities) {
+			var oxDataCall = this
+			var list = $.map(eligibilities, function(val, i) {
+					return oxDataCall.EligibilityIndex[val] || null;
+				});
+			this.set(this.Params.ELIGIBILITY_URIS, list);
+		}
+
+		this.setSkill = function(skill) {
+			if (skill) this.set(this.Params.SUBJECT_URI, skill);
+		}
+
+		this.setResearchMethod = function(method) {
+			if (method) this.set(this.Params.METHOD_URI, method);
+		}
+
+		this.perform = function(callback) {
+			$.ajaxSettings.traditional = true;
+			$.getJSON(this.url, this.params, callback);
+		}
+
+	}
+
+	// responsible for putting the results table together
+	//   @param chosenColumns the columns that were specified in the div on initialisation
+	//   @param showDates boolean flag indicating whether dates should be shown
+	function TableBuilder(chosenColumns, showDates) {
+
+		this.rows = [];
+		this.columns = {};
+
+		// called at the end to make sure the namespace is all there
+		this.init = function() {
 			// let's initialise these columns based on the what was chosen in the options
-			if (chosenColumns && chosenColumns.size > 0) {
-				var availableColumns = this.filter(Fields, function(x) {
-						return this.isAChosenColumn(x, chosenColumns) && this.canDisplaycolumn(x, showDates);
-					});
-				this.columns = this.convertToObject(availableColumns);
+			if (chosenColumns && chosenColumns.length > 0) {
+				for (var i in chosenColumns) {
+					var columnName = chosenColumns[i];
+					var foundIndex = this.getColumnIndex(columnName, Fields);
+					if (foundIndex && this.canDisplayColumn(columnName, showDates)) {
+						this.columns[foundIndex] = Fields[foundIndex];
+					}
+				}
 			} else {
 				this.columns = Fields;
 			}
+		}
 
-			// public
-			this.availableColumnbs = function() {
-				return this.columns;
-			}
+		// public
+		this.availableColumns = function() {
+			return this.columns;
+		}
 
-			this.addRows = function(rows) {
-				for (var i in rows) {
-					this.rows.push(rows[i]);
-				}
-			}
-
-			this.build = function() {
-				var table = $('<table/>', {'class': 'course-results-table'});
-
-				var head = $('<thead/>');
-				for (var i in this.columns) {
-					head.append(this.columns[i].toHtml());
-				}
-				table.append(head);
-
-				var body = $('<tbody/>');
-				for (var i in this.rows) {
-					body.append(this.rows[i].toHtml());
-				}
-				table.append(body);
-
-				return table;
-			}
-
-			// private
-			this.isAChosenColumn = function(column, chosenColumns) {
-				return $.inArray(column.name, chosenColumns);
-			}
-
-			this.canDisplayColumn = function(column, showDates) {
-				return showDates || column.name != 'start';
-			}
-
-			this.filter = function(list, predicate) {
-				newList = [];
-				for(var i in list) {
-					if (predicate(list[i])) {
-						newList.push(list[i]);
-					}
-				}
-				return newList;
-			}
-
-			this.convertToObject = function(list) {
-				newList = {};
-				for(var i in list) {
-					newList[list[i]] = true;
-				}
-				return newList;
+		this.addRows = function(rows) {
+			for (var i in rows) {
+				this.rows.push(rows[i]);
 			}
 		}
 
-		function Column(name, text, classname) {
-			this.name       = name
-			this.classname  = classname
-			this.text       = text
+		this.build = function() {
+			var table = $('<table/>', {'class': 'course-results-table'});
 
-			this.toHtml = function() {
-				return $('<th/>', {'text': text, 'class': classname});
+			var head = $('<thead/>');
+			var headRow = $('<tr/>');
+			for (var i in this.columns) {
+				headRow.append(this.columns[i].toHtml());
 			}
+			table.append(head.append(headRow));
+
+			var body = $('<tbody/>');
+			for (var i in this.rows) {
+				body.append(this.rows[i].toHtml());
+			}
+			table.append(body);
+
+			return table;
 		}
 
-		var Fields = {
-			START       : Column('start',       'Start date',  'course-presentation-start'),
-			TITLE       : Column('title',       'Title',       'course-title'),
-			SUBJECT     : Column('subject',     'Subject(s)',  'course-subject'),
-			VENUE       : Column('venue',       'Venue',       'course-presentation-venue'),
-			PROVIDER    : Column('provider',    'Provider',    'course-provider'),
-			DESCRIPTION : Column('description', 'Description', 'course-description'),
-			ELIGIBILITY : Column('eligibility', 'Eligibility', 'course-eligibility')
+		// private
+		this.getColumnIndex = function(columnName, fields) {
+			for (var i in fields) {
+				if(fields[i].name == columnName) {
+					return i;
+				}
+			}
+			return false;
+		}
+
+		this.canDisplayColumn = function(columnName, showDates) {
+			return showDates || columnName != 'start';
+		}
+
+		this.init();
+	}
+
+	function Column(name, text, classname) {
+		this.name       = name
+		this.classname  = classname
+		this.text       = text
+
+		this.toHtml = function() {
+			return $('<th/>', {'text': text, 'class': classname});
+		}
+	}
+
+	var Fields = {
+		START       : new Column('start',       'Start date',  'course-presentation-start'),
+		TITLE       : new Column('title',       'Title',       'course-title'),
+		SUBJECT     : new Column('subject',     'Subject(s)',  'course-subject'),
+		VENUE       : new Column('venue',       'Venue',       'course-presentation-venue'),
+		PROVIDER    : new Column('provider',    'Provider',    'course-provider'),
+		DESCRIPTION : new Column('description', 'Description', 'course-description'),
+		ELIGIBILITY : new Column('eligibility', 'Eligibility', 'course-eligibility')
+	};
+
+	// handles the data that is returned from data.ox.ac.uk
+	function ResponseParser(results) {
+		this.presentations = results.hits.hits;
+
+		this.toRows = function(availableColumns) {
+			return $.map(this.presentations, function(presentation, i) {
+				var result = presentation._source;
+
+				var row = new Row(availableColumns);
+				row.setStart(result.start);
+				row.setTitle(result.label, result.applyTo, result.homepage);
+				row.setSubjects(result.subject);
+				row.setVenue(result.venue);
+				row.setProvider(result.offeredBy);
+				row.setDescription(result.description);
+				row.setEligibility(result.eligibility);
+
+				return row;
+			});
+		}
+	}
+
+	function Row(availableColumns) {
+		this.cells = {}
+		this.columns = availableColumns;
+
+		this.addCell = function(field, html) {
+			var found = false;
+			for (var i in this.columns) {
+				if (this.columns[i] == field) {
+					found = true;
+				}
+			}
+
+			if (found) {
+				this.cells[field.name] = html;
+			}
+
+		}
+
+		this.toHtml = function() {
+			var row = this;
+			var tds = $.map(this.columns, function(column, i) {
+					return $('<td/>').append(row.cells[column.name])[0].outerHTML;
+				});
+			return $('<tr/>').append(tds.join(''));
 		};
 
-		// handles the data that is returned from data.ox.ac.uk
-		function ResponseParser(results) {
-			this.presentations = results.hits.hits;
-			// for date parsing
-			this.momentLib = require('moment');
-
-			this.toRows = function(availableColumns) {
-				return $.map(presentations, function(presenatation, i) {
-					result = presenation._source;
-
-					row = new Row(availableColumns);
-					row.setStart(result.start, this.momentLib);
-					row.setTitle(result.label, result.applyTo, result.homepage);
-					row.setSubjects(result.subject);
-					row.setVenue(result.venue);
-					row.setProvider(result.offeredBy);
-					row.setDescription(result.description);
-					row.setEligibility(result.eligibility);
-
-					return row;
-				});
+		this.setStart = function(start) {
+			if(start) {
+				this.addCell(Fields.START, moment(start.time).format("ddd D MMM YYYY")); // Mon 1 Oct 2012
 			}
 		}
 
-		function Row(availableColumns) {
-			this.cells = {}
-			this.columns = availableColumns;
+		this.setTitle = function(label, apply, homepage) {
+			title = label ? label.valueOf() : '-';
 
-			this.addCell = function(field, html) {
-				if ($.inArray(field, columns)) {
-					this.cells[name] = html;
-				}
+			if (apply) {
+				this.addCell(Fields.TITLE, mixedContentSafeLink(label, apply.uri));
+			} else if (homepage) {
+				this.addCell(Fields.TITLE, mixedContentSafeLink(label, homepage.uri));
+			} else {
+				this.addCell(Fields.TITLE, $('<span/>', {'title': label, 'text': label}));
 			}
+		}
 
-			this.toHtml = function() {
-				var tds = $.map(this.cells, function(html, i) {
-						$('<td/>').append(html);
-					});
-				return $('<tr/>').append(tds.join(''));
-			};
-
-			this.setStart = function(start, momentLib) {
-				if(start) {
-					// Mon 1 Oct 2012
-					this.addCell(Fields.START, momentLib(start.time).format("ddd D MMM YYYY"));
-				}
-			}
-
-			this.setTitle = function(label, apply, homepage) {
-				title = label ? label.valueOf() : '-';
-
-				if (apply) {
-					this.addCell(Fields.TITLE, mixedContentSafeLink(label, applyTo.uri));
-				} else if (homepage) {
-					this.addCell(Fields.TITLE, mixedContentSafeLink(label, homepage.uri));
-				} else {
-					this.addCell(Fields.TITLE, $('<span/>', {'title': label, 'text': label}));
-				}
-			}
-
-			this.setSubjects = function(subjects) {
-				if (subjects) {
-					var notJACS = new Array();
-					for (j in subjects) {
-						if (!this.isJacsCode(subjects[j].uri)) {
-							notJACS.push(subjects[j].label);
-						}
+		this.setSubjects = function(subjects) {
+			if (subjects) {
+				var notJACS = new Array();
+				for (j in subjects) {
+					if (!this.isJacsCode(subjects[j].uri)) {
+						notJACS.push(subjects[j].label);
 					}
-					this.addCell(Fields.SUBJECT, $('<span>').text(notJACS.join(', ')));
 				}
+				this.addCell(Fields.SUBJECT, $('<span>').text(notJACS.join(', ')));
 			}
+		}
 
-			this.isJacsCode = function(code) {
-				return code.indexOf('http://jacs.dataincubator.org/') == 0;
-			}
+		this.isJacsCode = function(code) {
+			return code.indexOf('http://jacs.dataincubator.org/') == 0;
+		}
 
-			this.setVenue = function(venue) {
-				if (venue) {
-					var label = venue.label || '-';
-					this.addCell(Fields.VENUE, label);
-				}
+		this.setVenue = function(venue) {
+			if (venue) {
+				var label = venue.label || '-';
+				this.addCell(Fields.VENUE, label);
 			}
+		}
 
-			this.setProvider = function(provider) {
-				if (provider) {
-					var label = provider.label || '-';
-					this.addCell(Fields.PROVIDER, label);
-				}
+		this.setProvider = function(provider) {
+			if (provider) {
+				var label = provider.label || '-';
+				this.addCell(Fields.PROVIDER, label);
 			}
+		}
 
-			this.setDescription = function(description) {
-				if (description) {
-					this.addCell(Fields.DESCRIPTION, description);
-				}
+		this.setDescription = function(description) {
+			if (description) {
+				this.addCell(Fields.DESCRIPTION, description);
 			}
+		}
 
-			this.setEligibility = function(eligibility) {
-				if (eligibility) {
-					this.addCell(Fields.ELIGIBILITY, this.capitalise(eligibility));
-				}
+		this.setEligibility = function(eligibility) {
+			if (eligibility) {
+				this.addCell(Fields.ELIGIBILITY, this.capitalise(eligibility.label));
 			}
+		}
 
-			this.capitalise = function(sentence) {
-				capitalised = sentence.label.charAt(0).toUpperCase() + sentence.label.slice(1)
-			}
+		this.capitalise = function(word) {
+			return capitalised = word.charAt(0).toUpperCase() + word.slice(1)
 		}
 	}
 
@@ -453,14 +502,8 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			var options = reader.read();
 
 			var ui = new WidgetUI(e);
-			ui.appendTitle(options.title);
-			ui.appendLoadingMessage();
-
-			getData(e, options);
-		};
-
-		// constructs the query from options and sends it
-		var getData = function(e, options) {
+			ui.addTitle(options.title);
+			ui.addLoadingMessage();
 
 			call = new OxDataCall();
 			call.prepare(options);
@@ -479,45 +522,11 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
 			tabler.addRows(parser.toRows(availableColumns));
 
-			/*
-			 * Disable the courses without dates link whilst the functionality is still being improved
-			 *
-
-			var linkTitle = (options.withoutDates)? "Show courses with specific dates" : "Show courses without specific dates";
-			var $noDatesToggle = $('<a class="courses-widget-no-date-toggle-link" href="#">' + linkTitle + '</a>').click(function () {
-				options.withoutDates = (options.withoutDates)? false : true;
-				$(e).children('.course-results-table').remove();
-				$(e).children('.dataTables_wrapper').remove();
-				$(this).remove(); 
-				getData(e, options);
-				return false;
-			});
-
-			$(e).append($noDatesToggle);
-
-			*/
-
-			var dataTablesColumnsConfig = new Array();
-			var columnCount = 0;
-			for (var column in columnsToDisplay) {
-				switch (column) {
-					case 'start':
-						dataTablesColumnsConfig.push({ "sWidth": '8.1em', "aTargets":[columnCount], 'sType':'date'});
-						break;
-					default: break;
-				}
-				columnCount++;
-			}
-			dataTable = $(e).children(".course-results-table").dataTable( {
-				aoColumnDefs: dataTablesColumnsConfig,
-        "iDisplayLength": 25,
-				"oLanguage": {
-						"sEmptyTable" : "No matching courses found.",
-					},
-			} );
-
-			$(e).children(".courses-widget-wait").hide();
-
+			var ui = new WidgetUI(e);
+			ui.addTable(tabler.build());
+			// ui.addNoDatesLink();
+			ui.configureDataTables(availableColumns);
+			ui.hideLoadingMessage();
 		};
 
 		$('.courses-widget-container').each(function(i, e){ setUp(e);});
