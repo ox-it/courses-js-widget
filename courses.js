@@ -80,7 +80,7 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 	// Holding the parameters for the widget
 	function Options() {
 
-		this.includeContinuingEducation = false;
+		this.includeTALLCourses = false;
 
 		this.setTitle = function(title) {
 			this.title = title || "Courses";
@@ -244,7 +244,7 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 		}
 
 		this.prepare = function(options) {
-			this.setQuery(options.includeContinuingEducation);
+			this.setQuery(options.includeTALLCourses)
 			this.setUnits(options.units);
 
 			if(options.withoutDates || (options.defaultViewWithoutDates() && options.withoutDates == undefined)) {
@@ -264,8 +264,8 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			this.params[name] = value;
 		}
 
-		this.setQuery = function(includeCE) {
-			this.set(this.Params.QUERY, includeCE ? '*' : '* NOT offeredBy.label:"Department of Continuing Education"');
+		this.setQuery = function(includeTALL) {
+			this.set(this.Params.QUERY, includeTALL ? '*' : '* NOT catalog.uri:"http://course.data.ox.ac.uk/id/continuing-education/catalog"');
 		}
 
 		this.setUnits = function(units) {
