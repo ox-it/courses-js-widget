@@ -417,8 +417,9 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 		}
 
 		this.toHtml = function() {
-			var tds = $.map(this.cells, function(html, i) {
-					return $('<td/>').append(html)[0].outerHTML;
+			var row = this;
+			var tds = $.map(this.columns, function(column, i) {
+					return $('<td/>').append(row.cells[column.name])[0].outerHTML;
 				});
 			return $('<tr/>').append(tds.join(''));
 		};
