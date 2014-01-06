@@ -136,6 +136,14 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 		this.setDefaultDatesView = function(param) {
 			this.defaultDatesView = param;
 		}
+
+		this.defaultViewWithDates = function() {
+			return this.defaultDatesView == 'withDates';
+		}
+
+		this.defaultViewWithoutDates = function() {
+			return this.defaultDatesView == 'withoutDates';
+		}
 	}
 
 	// controls the interface of the widget
@@ -239,7 +247,8 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			this.setQuery(options.includeContinuingEducation);
 			this.setUnits(options.units);
 
-			if(options.withoutDates || (options.defaultDatesView && options.withoutDates == undefined)) {
+			if(options.withoutDates || (options.defaultViewWithoutDates() && options.withoutDates == undefined)) {
+				options.withoutDates = true;
 				this.setNoDates();
 			} else {
 				this.setDates(options.startingBefore, options.startingAfter);
