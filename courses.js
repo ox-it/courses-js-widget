@@ -64,6 +64,7 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			this.options.setEligibilities(this.fetch("data-eligibility"));
 			this.options.setResearchMethod(this.fetch("data-researchMethod"));
 			this.options.setSkill(this.fetch("data-skill"));
+			this.options.setShowWithoutDatesLink(this.fetch("data-showWithoutDatesLink"));
 
 			this.options.setStartingFilters(
 				this.fetch("data-startingBefore"),
@@ -126,6 +127,10 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 		// helper function for setting dates
 		this.readNowAsCurrentTime = function(param) {
 			return param == "now" ? now() : param;
+		}
+
+		this.setShowWithoutDatesLink = function(param) {
+			this.showWithoutDatesLink = param === 'true';
 		}
 	}
 
