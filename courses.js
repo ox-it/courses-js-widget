@@ -291,16 +291,22 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 	function TableBuilder(chosenColumns, showDates) {
 
 		this.rows = [];
-		this.columns = [];
+		this.columns = {};
 
-		// let's initialise these columns based on the what was chosen in the options
-		if (chosenColumns && chosenColumns.size > 0) {
-			var availableColumns = this.filter(Fields, function(x) {
-					return this.isAChosenColumn(x, chosenColumns) && this.canDisplaycolumn(x, showDates);
-				});
-			this.columns = this.convertToObject(availableColumns);
-		} else {
-			this.columns = Fields;
+		// called at the end to make sure the namespace is all there
+		this.init = function() {
+			// let's initialise these columns based on the what was chosen in the options
+			if (chosenColumns && chosenColumns.length > 0) {
+				for (var i in chosenColumns) {
+					var columnName = chosenColumns[i];
+					var foundIndex = this.getColumnIndex(columnName, Fields);
+					if (foundIndex && this.canDisplayColumn(columnName, showDates)) {
+						this.columns[foundIndex] = Fields[foundIndex];
+					}
+				}
+			} else {
+				this.columns = Fields;
+			}
 		}
 
 		// public
@@ -318,10 +324,11 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			var table = $('<table/>', {'class': 'course-results-table'});
 
 			var head = $('<thead/>');
+			var headRow = $('<tr/>');
 			for (var i in this.columns) {
-				head.append(this.columns[i].toHtml());
+				headRow.append(this.columns[i].toHtml());
 			}
-			table.append(head);
+			table.append(head.append(headRow));
 
 			var body = $('<tbody/>');
 			for (var i in this.rows) {
@@ -333,31 +340,20 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 		}
 
 		// private
-		this.isAChosenColumn = function(column, chosenColumns) {
-			return $.inArray(column.name, chosenColumns);
-		}
-
-		this.canDisplayColumn = function(column, showDates) {
-			return showDates || column.name != 'start';
-		}
-
-		this.filter = function(list, predicate) {
-			newList = [];
-			for(var i in list) {
-				if (predicate(list[i])) {
-					newList.push(list[i]);
+		this.getColumnIndex = function(columnName, fields) {
+			for (var i in fields) {
+				if(fields[i].name == columnName) {
+					return i;
 				}
 			}
-			return newList;
+			return false;
 		}
 
-		this.convertToObject = function(list) {
-			newList = {};
-			for(var i in list) {
-				newList[list[i]] = true;
-			}
-			return newList;
+		this.canDisplayColumn = function(columnName, showDates) {
+			return showDates || columnName != 'start';
 		}
+
+		this.init();
 	}
 
 	function Column(name, text, classname) {
