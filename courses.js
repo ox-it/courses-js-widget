@@ -283,7 +283,7 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 		}
 
 		this.EligibilityIndex = {
-			'SU': 'oxcap:eligibility-public',
+			'PU': 'oxcap:eligibility-public',
 			'OX': 'oxcap:eligibility-members',
 			'ST': 'oxcap:eligibility-staff'
 		}
