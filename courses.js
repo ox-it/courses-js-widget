@@ -163,19 +163,21 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			$('<h2/>', {'class': 'courses-widget-title', 'text': title}).appendTo(this.$e);
 		}
 
-		this.addNoDatesLink = function() {
-			var linkTitle = (options.withoutDates)? "Show courses with specific dates" : "Show courses without specific dates";
-			var $noDatesToggle = $('<a class="courses-widget-no-date-toggle-link" href="#">' + linkTitle + '</a>').click(function () {
-				options.withoutDates = (options.withoutDates)? false : true;
-				$(e).children('.course-results-table').remove();
-				$(e).children('.dataTables_wrapper').remove();
-				$(this).remove(); 
-				getData(e, options);
+		this.addNoDatesLink = function(options) {
+			if (options.showWithoutDatesLink === true) {
+				var linkTitle = (options.withoutDates)? "Show courses with specific dates" : "Show courses without specific dates";
+				var $noDatesToggle = $('<a class="courses-widget-no-date-toggle-link" href="#">' + linkTitle + '</a>').click(function () {
+					options.withoutDates = (options.withoutDates)? false : true;
+					$(e).children('.course-results-table').remove();
+					$(e).children('.dataTables_wrapper').remove();
+					$(this).remove();
+					getData(e, options);
 
-				return false;
-			});
+					return false;
+				});
 
-			$(e).append($noDatesToggle);
+				$(e).append($noDatesToggle);
+			}
 		}
 
 		this.addTable = function(tableHtml) {
@@ -534,7 +536,7 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
 			var ui = new WidgetUI(e);
 			ui.addTable(tabler.build());
-			// ui.addNoDatesLink();
+			ui.addNoDatesLink(options);
 			ui.configureDataTables(availableColumns);
 			ui.hideLoadingMessage();
 		};
