@@ -148,7 +148,58 @@ Multiple URIs can be specified separated by spaces for courses taught by any of 
      data-displayColumns="start title eligibility provider"
      data-providedBy="http://oxpoints.oucs.ox.ac.uk/id/00000000" ></div>
 
-</div>
-</div>
+<pre>
+&lt;div class="courses-widget-container"
+     data-title="Widget with a link to show courses without dates"
+     data-displayColumns="start title provider"
+     data-startingAfter="2014-01-01"
+     data-providedBy="http://oxpoints.oucs.ox.ac.uk/id/23232639" /&gt;&lt;div&gt;;
+</pre>
+
+<div class="courses-widget-container"
+     data-title="Widget with a link to show courses without dates"
+     data-displayColumns="start title provider"
+     data-startingAfter="2014-01-01"
+     data-showWithoutDatesLink="true"
+     data-providedBy="http://oxpoints.oucs.ox.ac.uk/id/23232639" ></div>
+
+<h2>Showing courses without dates</h2>
+
+<p>Some courses do not have start dates associated with them.</p>
+
+<p>You can provide a link to toggle between courses with start dates and courses without.</p>
+
+<pre>
+&lt;div class="courses-widget-container"
+     data-title="Widget with a link to show courses without dates"
+     data-displayColumns="start title provider"
+     data-startingAfter="2014-01-01"
+     data-showWithoutDatesLink="true"
+     data-providedBy="http://oxpoints.oucs.ox.ac.uk/id/23232639" /&gt;&lt;div&gt;;
+</pre>
+
+<div class="courses-widget-container"
+     data-title="Widget with a link to show courses without dates"
+     data-displayColumns="start title provider"
+     data-startingAfter="2014-01-01"
+     data-showWithoutDatesLink="true"
+     data-providedBy="http://oxpoints.oucs.ox.ac.uk/id/23232639" ></div>
+
+<p>You can also specify whether the first load shows courses with dates or courses without dates.</p>
+
+<pre>
+&lt;div class="courses-widget-container"
+     data-title="Widget with a link to show courses"
+     data-displayColumns="start title provider"
+     data-defaultDatesView="withoutDates"
+     data-providedBy="http://oxpoints.oucs.ox.ac.uk/id/23232639" /&gt;&lt;div&gt;;
+</pre>
+
+<div class="courses-widget-container"
+     data-title="Widget with to show courses without dates"
+     data-displayColumns="start title provider"
+     data-defaultDatesView="withoutDates"
+     data-providedBy="http://oxpoints.oucs.ox.ac.uk/id/23232639" ></div>
+
 </body>
 </html>
