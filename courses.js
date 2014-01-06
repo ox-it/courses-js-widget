@@ -64,6 +64,8 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			this.options.setEligibilities(this.fetch("data-eligibility"));
 			this.options.setResearchMethod(this.fetch("data-researchMethod"));
 			this.options.setSkill(this.fetch("data-skill"));
+			this.options.setShowWithoutDatesLink(this.fetch("data-showWithoutDatesLink"));
+			this.options.setDefaultDatesView(this.fetch("data-defaultDatesView"));
 
 			this.options.setStartingFilters(
 				this.fetch("data-startingBefore"),
@@ -78,7 +80,6 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 	// Holding the parameters for the widget
 	function Options() {
 
-		this.withoutDates = false;
 		this.includeContinuingEducation = false;
 
 		this.setTitle = function(title) {
@@ -127,6 +128,22 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 		this.readNowAsCurrentTime = function(param) {
 			return param == "now" ? now() : param;
 		}
+
+		this.setShowWithoutDatesLink = function(param) {
+			this.showWithoutDatesLink = param === 'true';
+		}
+
+		this.setDefaultDatesView = function(param) {
+			this.defaultDatesView = param;
+		}
+
+		this.defaultViewWithDates = function() {
+			return this.defaultDatesView == 'withDates';
+		}
+
+		this.defaultViewWithoutDates = function() {
+			return this.defaultDatesView == 'withoutDates';
+		}
 	}
 
 	// controls the interface of the widget
@@ -139,12 +156,17 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 				.append(this.loadingImage())
 			  .appendTo(this.$e);
 
+			this.showLoadingMessage();
+		}
+
+		this.showLoadingMessage = function() {
 			this.$e.children(".courses-widget-wait").show();
 		}
 
 		this.hideLoadingMessage = function() {
 			this.$e.children(".courses-widget-wait").hide();
 		}
+
 		this.loadingImage = function() {
 			return $('<img/>', {'src': 'https://static.data.ox.ac.uk/loader.gif', 'alt': 'Please wait'})
 		}
@@ -153,19 +175,22 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			$('<h2/>', {'class': 'courses-widget-title', 'text': title}).appendTo(this.$e);
 		}
 
-		this.addNoDatesLink = function() {
-			var linkTitle = (options.withoutDates)? "Show courses with specific dates" : "Show courses without specific dates";
-			var $noDatesToggle = $('<a class="courses-widget-no-date-toggle-link" href="#">' + linkTitle + '</a>').click(function () {
-				options.withoutDates = (options.withoutDates)? false : true;
-				$(e).children('.course-results-table').remove();
-				$(e).children('.dataTables_wrapper').remove();
-				$(this).remove(); 
-				getData(e, options);
+		this.addNoDatesLink = function(options, getData) {
+			if (options.showWithoutDatesLink) {
+				var linkTitle = (options.withoutDates)? "Show courses with specific dates" : "Show courses without specific dates";
+				var ui = this;
+				var $noDatesToggle = $('<a class="courses-widget-no-date-toggle-link" href="#">' + linkTitle + '</a>').click(function () {
+					options.withoutDates = (options.withoutDates)? false : true;
+					ui.$e.children('.course-results-table').remove();
+					ui.$e.children('.dataTables_wrapper').remove();
+					$(this).remove();
+					getData(ui.e, options);
 
-				return false;
-			});
+					return false;
+				});
 
-			$(e).append($noDatesToggle);
+				this.$e.append($noDatesToggle);
+			}
 		}
 
 		this.addTable = function(tableHtml) {
@@ -222,7 +247,8 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			this.setQuery(options.includeContinuingEducation);
 			this.setUnits(options.units);
 
-			if(options.withoutDates) {
+			if(options.withoutDates || (options.defaultViewWithoutDates() && options.withoutDates == undefined)) {
+				options.withoutDates = true;
 				this.setNoDates();
 			} else {
 				this.setDates(options.startingBefore, options.startingAfter);
@@ -500,10 +526,17 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
 			var reader  = new ParametersReader(new Options(), e);
 			var options = reader.read();
+			getData(e, options);
 
 			var ui = new WidgetUI(e);
 			ui.addTitle(options.title);
 			ui.addLoadingMessage();
+		}
+
+		// this can be called from `setUp` or from clicking on the show without dates link
+		var getData = function(e, options) {
+			var ui = new WidgetUI(e);
+			ui.showLoadingMessage();
 
 			call = new OxDataCall();
 			call.prepare(options);
@@ -523,8 +556,8 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			tabler.addRows(parser.toRows(availableColumns));
 
 			var ui = new WidgetUI(e);
+			ui.addNoDatesLink(options, getData);
 			ui.addTable(tabler.build());
-			// ui.addNoDatesLink();
 			ui.configureDataTables(availableColumns);
 			ui.hideLoadingMessage();
 		};
