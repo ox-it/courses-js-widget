@@ -65,6 +65,7 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 			this.options.setResearchMethod(this.fetch("data-researchMethod"));
 			this.options.setSkill(this.fetch("data-skill"));
 			this.options.setShowWithoutDatesLink(this.fetch("data-showWithoutDatesLink"));
+			this.options.setDefaultDatesView(this.fetch("data-defaultDatesView"));
 
 			this.options.setStartingFilters(
 				this.fetch("data-startingBefore"),
@@ -131,6 +132,10 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
 		this.setShowWithoutDatesLink = function(param) {
 			this.showWithoutDatesLink = param === 'true';
+		}
+
+		this.setDefaultDatesView = function(param) {
+			this.defaultDatesView = param;
 		}
 	}
 
