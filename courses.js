@@ -479,12 +479,12 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
 		this.setEligibility = function(eligibility) {
 			if (eligibility) {
-				this.addCell(Fields.ELIGIBILITY, this.capitalise(eligibility));
+				this.addCell(Fields.ELIGIBILITY, this.capitalise(eligibility.label));
 			}
 		}
 
-		this.capitalise = function(sentence) {
-			capitalised = sentence.label.charAt(0).toUpperCase() + sentence.label.slice(1)
+		this.capitalise = function(word) {
+			return capitalised = word.charAt(0).toUpperCase() + word.slice(1)
 		}
 	}
 
