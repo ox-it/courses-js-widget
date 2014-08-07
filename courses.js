@@ -525,6 +525,7 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 		add_css("//static.data.ox.ac.uk/courses-js-widget/courses.css");
 
 		var setUp = function(e, dataTablesConfig) {
+
 			var reader  = new ParametersReader(new Options(), e);
 			var options = reader.read();
 			getData(e, options, dataTablesConfig);
