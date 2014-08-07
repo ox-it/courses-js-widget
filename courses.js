@@ -147,9 +147,10 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 	}
 
 	// controls the interface of the widget
-	function WidgetUI(element) {
+	function WidgetUI(element, callbacks) {
 		this.e  = element;
 		this.$e = $(element);
+		this.callbacks = (typeof callbacks !== 'undefined') ? callbacks : {};
 
 		this.addLoadingMessage = function() {
 			$('<div/>', {'class': 'courses-widget-wait', 'text': 'Loading courses...'})
@@ -209,14 +210,15 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 				i++;
 			}
 
-			dataTable = this.$e.children(".course-results-table").dataTable({
+			var params = $.extend({
 				aoColumnDefs: config,
 				"iDisplayLength": 25,
 				"oLanguage": {
 					"sEmptyTable" : "No matching courses found.",
-				},
-			});
+				}
+			}, this.callbacks);
 
+			dataTable = this.$e.children(".course-results-table").dataTable(params);
 		}
 	}
 
@@ -522,31 +524,30 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 		add_css("//static.data.ox.ac.uk/lib/DataTables/media/css/jquery.dataTables.css");
 		add_css("//static.data.ox.ac.uk/courses-js-widget/courses.css");
 
-		var setUp = function(e) {
-
+		var setUp = function(e, callbacks) {
 			var reader  = new ParametersReader(new Options(), e);
 			var options = reader.read();
-			getData(e, options);
+			getData(e, options, callbacks);
 
-			var ui = new WidgetUI(e);
+			var ui = new WidgetUI(e, callbacks);
 			ui.addTitle(options.title);
 			ui.addLoadingMessage();
 		}
 
 		// this can be called from `setUp` or from clicking on the show without dates link
-		var getData = function(e, options) {
-			var ui = new WidgetUI(e);
+		var getData = function(e, options, callbacks) {
+			var ui = new WidgetUI(e, callbacks);
 			ui.showLoadingMessage();
 
 			call = new OxDataCall();
 			call.prepare(options);
-			callback = function(json) { handleData(e, options, json); };
+			callback = function(json) { handleData(e, options, json, callbacks); };
 			call.perform(callback);
 
 		};
 
 		// handles the query results 
-		var handleData = function(e, options, results) {
+		var handleData = function(e, options, results, callbacks) {
 
 			var parser  = new ResponseParser(results);
 			var tabler  = new TableBuilder(options.displayColumns, !options.withoutDates);
@@ -555,11 +556,27 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
 			tabler.addRows(parser.toRows(availableColumns));
 
-			var ui = new WidgetUI(e);
+			var ui = new WidgetUI(e, callbacks);
 			ui.addNoDatesLink(options, getData);
 			ui.addTable(tabler.build());
 			ui.configureDataTables(availableColumns);
 			ui.hideLoadingMessage();
+		};
+
+		// create jquery 'plugin' for binding this functionality on the fly
+		$.fn.oxfordCoursesWidget = function(options) {
+			// settings
+			var settings = $.extend({
+				// settings to be added
+			}, options);
+
+			// ensure that 'callbacks' is an object
+			if (!settings.callbacks)
+				settings.callbacks = {};
+
+			return this.each(function(i, e) {
+				setUp(e, settings.callbacks);
+			});
 		};
 
 		$('.courses-widget-container').each(function(i, e){ setUp(e);});
