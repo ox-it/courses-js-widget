@@ -147,10 +147,10 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 	}
 
 	// controls the interface of the widget
-	function WidgetUI(element, callbacks) {
+	function WidgetUI(element, dataTablesConfig) {
 		this.e  = element;
 		this.$e = $(element);
-		this.callbacks = (typeof callbacks !== 'undefined') ? callbacks : {};
+		this.dataTablesConfig = (typeof dataTablesConfig !== 'undefined') ? dataTablesConfig : {};
 
 		this.addLoadingMessage = function() {
 			$('<div/>', {'class': 'courses-widget-wait', 'text': 'Loading courses...'})
@@ -216,7 +216,7 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 				"oLanguage": {
 					"sEmptyTable" : "No matching courses found.",
 				}
-			}, this.callbacks);
+			}, this.dataTablesConfig);
 
 			dataTable = this.$e.children(".course-results-table").dataTable(params);
 		}
@@ -524,30 +524,30 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 		add_css("//static.data.ox.ac.uk/lib/DataTables/media/css/jquery.dataTables.css");
 		add_css("//static.data.ox.ac.uk/courses-js-widget/courses.css");
 
-		var setUp = function(e, callbacks) {
+		var setUp = function(e, dataTablesConfig) {
 			var reader  = new ParametersReader(new Options(), e);
 			var options = reader.read();
-			getData(e, options, callbacks);
+			getData(e, options, dataTablesConfig);
 
-			var ui = new WidgetUI(e, callbacks);
+			var ui = new WidgetUI(e, dataTablesConfig);
 			ui.addTitle(options.title);
 			ui.addLoadingMessage();
 		}
 
 		// this can be called from `setUp` or from clicking on the show without dates link
-		var getData = function(e, options, callbacks) {
-			var ui = new WidgetUI(e, callbacks);
+		var getData = function(e, options, dataTablesConfig) {
+			var ui = new WidgetUI(e, dataTablesConfig);
 			ui.showLoadingMessage();
 
 			call = new OxDataCall();
 			call.prepare(options);
-			callback = function(json) { handleData(e, options, json, callbacks); };
+			callback = function(json) { handleData(e, options, json, dataTablesConfig); };
 			call.perform(callback);
 
 		};
 
 		// handles the query results 
-		var handleData = function(e, options, results, callbacks) {
+		var handleData = function(e, options, results, dataTablesConfig) {
 
 			var parser  = new ResponseParser(results);
 			var tabler  = new TableBuilder(options.displayColumns, !options.withoutDates);
@@ -556,29 +556,46 @@ define(['jquery', 'jquery.dataTables', 'moment'], function($) {
 
 			tabler.addRows(parser.toRows(availableColumns));
 
-			var ui = new WidgetUI(e, callbacks);
+			var ui = new WidgetUI(e, dataTablesConfig);
 			ui.addNoDatesLink(options, getData);
 			ui.addTable(tabler.build());
 			ui.configureDataTables(availableColumns);
 			ui.hideLoadingMessage();
 		};
 
-		// create jquery 'plugin' for binding this functionality on the fly
+
+		/*	create a jQuery plugin/wrapper for binding this functionality on the fly.
+				'options' is a literal that takes the following parameter(s):
+
+				@param dataTablesConfig {object}
+					Literal of dataTables API calls. For example:
+
+						dataTablesConfig: {
+							fnInitComplete: function(settings, json) {
+								alert('Table has initialized!');
+							},
+							fnInfoCallback : function(oSettings, iStart, iEnd, iMax, iTotal, sPre) {
+								alert('Table has ben modified!');
+							}
+						}
+
+					Will give an alert box when the table is first drawn and whenever its state
+					changes (e.g. the page changes).
+
+					(Full API @ http://www.datatables.net/examples/api/index.html)
+
+				(more parameters can be added in the future)
+		*/
 		$.fn.oxfordCoursesWidget = function(options) {
-			// settings
 			var settings = $.extend({
-				// settings to be added
+				dataTablesConfig: {}
 			}, options);
 
-			// ensure that 'callbacks' is an object
-			if (!settings.callbacks)
-				settings.callbacks = {};
-
 			return this.each(function(i, e) {
-				setUp(e, settings.callbacks);
+				setUp(e, settings.dataTablesConfig);
 			});
 		};
 
-		$('.courses-widget-container').each(function(i, e){ setUp(e);});
+		$('.courses-widget-container').oxfordCoursesWidget();
 	});
 });
